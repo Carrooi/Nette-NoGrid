@@ -1,0 +1,37 @@
+{
+	"name": "carrooi/no-grid",
+	"type": "library",
+	"description": "Not a grid for Nette framework",
+	"keywords": ["nette", "grid", "table", "data", "source"],
+	"homepage": "https://github.com/Carrooi/Nette-NoGrid",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "David Kudera",
+			"homepage": "http://davidkudera.com",
+			"email": "kudera.d@gmail.com"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/Carrooi/Nette-NoGrid/issues"
+	},
+	"require": {
+		"nette/di": "~2.2",
+		"nette/application": "~2.2",
+		"latte/latte": "~2.2",
+		"doctrine/orm": "~2.4"
+	},
+	"require-dev": {
+		"nette/bootstrap": "~2.2",
+		"nette/tester": "~1.5",
+		"nette/mail": "~2.2",
+		"nette/safe-stream": "~2.2",
+		"tracy/tracy": "~2.2",
+		"mockery/mockery": "~0.9.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Carrooi\\NoGrid\\": "src/"
+		}
+	}
+}
