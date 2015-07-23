@@ -28,7 +28,7 @@ It may get some of these features in future.
 ## Installation
 
 ```
-$ composer require carrooi/nette-menu
+$ composer require carrooi/no-grid
 ```
 
 Now you can register Nette's extension
