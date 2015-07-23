@@ -71,7 +71,7 @@ class BooksPresenter extends Presenter
 			['title' => 'Narnia'],
 		]);
 	
-		$grid = $this->gridFactory($dataSource);
+		$grid = $this->gridFactory->create($dataSource);
 		
 		return $grid;
 	}
