@@ -25,8 +25,8 @@ class Macros extends MacroSet
 		$me = new static($compiler);
 
 		$me->addMacro('no-grid', [$me, 'macroNoGrid'], 'unset($_noGrid, $noGrid);');
-		$me->addMacro('no-grid-data-as', [$me, 'macroNoGridDataAs'], '}');
-		$me->addMacro('no-grid-views-as', [$me, 'macroNoGridViewsAs'], '}');
+		$me->addMacro('no-grid-data-as', '', [$me, 'macroNoGridDataAs']);
+		$me->addMacro('no-grid-views-as', '', [$me, 'macroNoGridViewsAs']);
 		$me->addMacro('no-grid-empty', [$me, 'macroNoGridEmpty'], '}');
 		$me->addMacro('no-grid-not-empty', [$me, 'macroNoGridNotEmpty'], '}');
 
@@ -60,7 +60,7 @@ class Macros extends MacroSet
 			throw new MacroDefinitionException('Macro no-grid-data-as must be inside of no-grid macro.');
 		}
 
-		return $writer->write('foreach ($_noGrid->getData() as %node.word) {');
+		$this->createIterator($node, $writer, '$_noGrid->getData()');
 	}
 
 
@@ -75,7 +75,7 @@ class Macros extends MacroSet
 			throw new MacroDefinitionException('Macro no-grid-views-as must be inside of no-grid macro.');
 		}
 
-		return $writer->write('foreach ($_noGrid->getViews() as %node.word) {');
+		$this->createIterator($node, $writer, '$_noGrid->getViews()');
 	}
 
 
@@ -124,6 +124,25 @@ class Macros extends MacroSet
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * @from https://github.com/nette/latte/blob/master/src/Latte/Macros/CoreMacros.php#L253-L263
+	 *
+	 * @param \Latte\MacroNode $node
+	 * @param \Latte\PhpWriter $writer
+	 * @param string $iterate
+	 */
+	private function createIterator(MacroNode $node, PhpWriter $writer, $iterate)
+	{
+		if ($node->modifiers !== '|noiterator' && preg_match('#\W(\$iterator|include|require|get_defined_vars)\W#', $this->getCompiler()->expandTokens($node->content))) {
+			$node->openingCode = '<?php $iterations = 0; foreach ($iterator = $_l->its[] = new Latte\Runtime\CachingIterator('. $iterate. ') as '. $writer->formatArgs(). ') { ?>';
+			$node->closingCode = '<?php $iterations++; } array_pop($_l->its); $iterator = end($_l->its) ?>';
+		} else {
+			$node->openingCode = '<?php $iterations = 0; foreach ('. $iterate. ' as ' . $writer->formatArgs() . ') { ?>';
+			$node->closingCode = '<?php $iterations++; } ?>';
+		}
 	}
 
 }
