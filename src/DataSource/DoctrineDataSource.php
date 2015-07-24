@@ -61,7 +61,18 @@ class DoctrineDataSource implements IDataSource
 	 */
 	public function fetchData()
 	{
-		return $this->qb->getQuery()->getResult();
+		if ($this->qb->getMaxResults() !== null || $this->qb->getFirstResult() !== null) {
+			$result = new Paginator($this->qb->getQuery());
+		} else {
+			$result = $this->qb->getQuery()->getResult();
+		}
+
+		$data = [];
+		foreach ($result as $item) {
+			$data[] = is_array($item) ? $item[0] : $item;
+		}
+
+		return $data;
 	}
 
 
