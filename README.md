@@ -179,6 +179,7 @@ protected function createComponentBooksGrid()
 
 * `Carrooi\NoGrid\DataSource\ArrayDataSource(array)`
 * `Carrooi\NoGrid\DataSource\DoctrineDataSource(Doctrine\ORM\QueryBuilder)`
+* `Carrooi\NoGrid\DataSource\DoctrineQueryObjectDataSource(Kdyby\Doctrine\QueryObject, Kdyby\Persistence\Queryable)`
 
 ## Changelog
 
