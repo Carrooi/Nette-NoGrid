@@ -27,6 +27,8 @@ class Macros extends MacroSet
 		$me->addMacro('no-grid', [$me, 'macroNoGrid'], 'unset($_noGrid, $noGrid);');
 		$me->addMacro('no-grid-data-as', [$me, 'macroNoGridDataAs'], '}');
 		$me->addMacro('no-grid-views-as', [$me, 'macroNoGridViewsAs'], '}');
+		$me->addMacro('no-grid-empty', [$me, 'macroNoGridEmpty'], '}');
+		$me->addMacro('no-grid-not-empty', [$me, 'macroNoGridNotEmpty'], '}');
 
 		return $me;
 	}
@@ -74,6 +76,36 @@ class Macros extends MacroSet
 		}
 
 		return $writer->write('foreach ($_noGrid->getViews() as %node.word) {');
+	}
+
+
+	/**
+	 * @param \Latte\MacroNode $node
+	 * @param \Latte\PhpWriter $writer
+	 * @return string
+	 */
+	public function macroNoGridEmpty(MacroNode $node, PhpWriter $writer)
+	{
+		if (!$this->findParentMacro($node, 'no-grid')) {
+			throw new MacroDefinitionException('Macro no-grid-empty must be inside of no-grid macro.');
+		}
+
+		return $writer->write('if ($_noGrid->getCount() === 0) {');
+	}
+
+
+	/**
+	 * @param \Latte\MacroNode $node
+	 * @param \Latte\PhpWriter $writer
+	 * @return string
+	 */
+	public function macroNoGridNotEmpty(MacroNode $node, PhpWriter $writer)
+	{
+		if (!$this->findParentMacro($node, 'no-grid')) {
+			throw new MacroDefinitionException('Macro no-grid-not-empty must be inside of no-grid macro.');
+		}
+
+		return $writer->write('if ($_noGrid->getCount() > 0) {');
 	}
 
 

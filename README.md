@@ -98,7 +98,8 @@ class BooksPresenter extends Presenter
 			<th>Display {$noGrid->getCount()} items from {$noGrid->getTotalCount()}</th>
 		</tr>
 		<tr>
-			<td>{control booksGrid:paginator}</td>
+			<td n:no-grid-not-empty>{control booksGrid:paginator}</td>
+			<td n:no-grid-empty>No data found...</td>
 		</tr>
 	</tfoot>
 </table>
@@ -109,6 +110,8 @@ class BooksPresenter extends Presenter
 * `no-grid`: Begin grid rendering (similar to [{form}](http://doc.nette.org/cs/2.3/forms#toc-manualni-vykreslovani) macro)
 * `no-grid-data-as`: Iterate over data from data source and save current line to given variable
 * `no-grid-views-as`: Iterate over views from current NoGrid and save view data to given variable (see more about views below)
+* `no-grid-not-empty`: Content will be processed only if there are some data
+* `no-grid-empty`: Content will be processed only if there are no data
 
 Also you can see that paginator can be rendered with `{control booksGrid:paginator}`.
 
