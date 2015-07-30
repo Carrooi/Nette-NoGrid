@@ -19,7 +19,7 @@
 		"nette/di": "~2.2",
 		"nette/application": "~2.2",
 		"latte/latte": "~2.2",
-		"kdyby/doctrine": "~2.3"
+		"kdyby/doctrine": ">=2.3"
 	},
 	"require-dev": {
 		"nette/bootstrap": "~2.2",
