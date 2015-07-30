@@ -90,7 +90,7 @@ class BooksPresenter extends Presenter
 	</thead>
 	<tbody>
 		<tr n:no-grid-data-as="$line">
-			<td>{$line[num]}</td>
+			<td>{$line[title]}</td>
 		</tr>
 	</tbody>
 	<tfoot>
