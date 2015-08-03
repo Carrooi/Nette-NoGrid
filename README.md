@@ -112,6 +112,7 @@ class BooksPresenter extends Presenter
 * `no-grid-views-as`: Iterate over views from current NoGrid and save view data to given variable (see more about views below)
 * `no-grid-not-empty`: Content will be processed only if there are some data
 * `no-grid-empty`: Content will be processed only if there are no data
+* `no-grid-has-paginator`: Content will be processed only if paginator should be rendered
 
 Also you can see that paginator can be rendered with `{control booksGrid:paginator}`.
 
