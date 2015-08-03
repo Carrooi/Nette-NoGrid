@@ -20,6 +20,9 @@ class NoGrid extends Control
 	/** @var array */
 	private $views = [];
 
+	/** @var bool */
+	private $paginatorEnabled = true;
+
 	/** @var int */
 	private $itemsPerPage = 10;
 
@@ -103,6 +106,35 @@ class NoGrid extends Control
 
 
 	/**
+	 * @return $this
+	 */
+	public function disablePaginator()
+	{
+		$this->paginatorEnabled = false;
+		return $this;
+	}
+
+
+	/**
+	 * @return $this
+	 */
+	public function enablePaginator()
+	{
+		$this->paginatorEnabled = true;
+		return $this;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isPaginatorEnabled()
+	{
+		return $this->paginatorEnabled === true;
+	}
+
+
+	/**
 	 * @return int
 	 */
 	public function getItemsPerPage()
@@ -163,13 +195,15 @@ class NoGrid extends Control
 
 			$this->totalCount = $this->dataSource->getCount();
 
-			$vp = $this['paginator'];
-			$paginator = $vp->getPaginator();
+			if ($this->paginatorEnabled) {
+				$vp = $this['paginator'];
+				$paginator = $vp->getPaginator();
 
-			$paginator->setItemsPerPage($this->getItemsPerPage());
-			$paginator->setItemCount($this->totalCount);
+				$paginator->setItemsPerPage($this->getItemsPerPage());
+				$paginator->setItemCount($this->totalCount);
 
-			$this->dataSource->limit($paginator->getOffset(), $paginator->getItemsPerPage());
+				$this->dataSource->limit($paginator->getOffset(), $paginator->getItemsPerPage());
+			}
 
 			$this->data = $this->dataSource->fetchData();
 		}

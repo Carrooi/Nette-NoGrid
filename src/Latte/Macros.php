@@ -121,7 +121,7 @@ class Macros extends MacroSet
 			throw new MacroDefinitionException('Macro no-grid-not-empty must be inside of no-grid macro.');
 		}
 
-		return $writer->write('if ($_noGrid->getTotalCount() > $_noGrid->getCount()) {');
+		return $writer->write('if ($_noGrid->isPaginatorEnabled() && $_noGrid->getTotalCount() > $_noGrid->getCount()) {');
 	}
 
 
