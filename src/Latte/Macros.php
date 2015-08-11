@@ -31,6 +31,13 @@ class Macros extends MacroSet
 		$me->addMacro('no-grid-not-empty', [$me, 'macroNoGridNotEmpty'], '}');
 		$me->addMacro('no-grid-has-paginator', [$me, 'macroNoGridHasPaginator'], '}');
 
+		$me->addMacro('noGrid', [$me, 'macroNoGrid'], 'unset($_noGrid, $noGrid);');
+		$me->addMacro('noGridDataAs', '', [$me, 'macroNoGridDataAs']);
+		$me->addMacro('noGridViewsAs', '', [$me, 'macroNoGridViewsAs']);
+		$me->addMacro('noGridEmpty', [$me, 'macroNoGridEmpty'], '}');
+		$me->addMacro('noGridNotEmpty', [$me, 'macroNoGridNotEmpty'], '}');
+		$me->addMacro('noGridHasPaginator', [$me, 'macroNoGridHasPaginator'], '}');
+
 		return $me;
 	}
 
@@ -42,7 +49,7 @@ class Macros extends MacroSet
 	 */
 	public function macroNoGrid(MacroNode $node, PhpWriter $writer)
 	{
-		if ($this->findParentMacro($node, 'no-grid')) {
+		if ($this->isInGrid($node)) {
 			throw new MacroDefinitionException('Nesting no-grid macros is not allowed.');
 		}
 
@@ -57,7 +64,7 @@ class Macros extends MacroSet
 	 */
 	public function macroNoGridDataAs(MacroNode $node, PhpWriter $writer)
 	{
-		if (!$this->findParentMacro($node, 'no-grid')) {
+		if (!$this->isInGrid($node)) {
 			throw new MacroDefinitionException('Macro no-grid-data-as must be inside of no-grid macro.');
 		}
 
@@ -72,7 +79,7 @@ class Macros extends MacroSet
 	 */
 	public function macroNoGridViewsAs(MacroNode $node, PhpWriter $writer)
 	{
-		if (!$this->findParentMacro($node, 'no-grid')) {
+		if (!$this->isInGrid($node)) {
 			throw new MacroDefinitionException('Macro no-grid-views-as must be inside of no-grid macro.');
 		}
 
@@ -87,7 +94,7 @@ class Macros extends MacroSet
 	 */
 	public function macroNoGridEmpty(MacroNode $node, PhpWriter $writer)
 	{
-		if (!$this->findParentMacro($node, 'no-grid')) {
+		if (!$this->isInGrid($node)) {
 			throw new MacroDefinitionException('Macro no-grid-empty must be inside of no-grid macro.');
 		}
 
@@ -102,7 +109,7 @@ class Macros extends MacroSet
 	 */
 	public function macroNoGridNotEmpty(MacroNode $node, PhpWriter $writer)
 	{
-		if (!$this->findParentMacro($node, 'no-grid')) {
+		if (!$this->isInGrid($node)) {
 			throw new MacroDefinitionException('Macro no-grid-not-empty must be inside of no-grid macro.');
 		}
 
@@ -117,7 +124,7 @@ class Macros extends MacroSet
 	 */
 	public function macroNoGridHasPaginator(MacroNode $node, PhpWriter $writer)
 	{
-		if (!$this->findParentMacro($node, 'no-grid')) {
+		if (!$this->isInGrid($node)) {
 			throw new MacroDefinitionException('Macro no-grid-not-empty must be inside of no-grid macro.');
 		}
 
@@ -127,14 +134,24 @@ class Macros extends MacroSet
 
 	/**
 	 * @param \Latte\MacroNode $node
-	 * @param string $name
 	 * @return bool
 	 */
-	private function findParentMacro(MacroNode $node, $name)
+	private function isInGrid(MacroNode $node)
+	{
+		return $this->findParentMacro($node, ['no-grid', 'noGrid']);
+	}
+
+
+	/**
+	 * @param \Latte\MacroNode $node
+	 * @param array $name
+	 * @return bool
+	 */
+	private function findParentMacro(MacroNode $node, array $name)
 	{
 		$current = $node;
 		while ($current = $current->parentNode) {
-			if ($current->name === $name) {
+			if (in_array($current->name, $name)) {
 				return true;
 			}
 		}

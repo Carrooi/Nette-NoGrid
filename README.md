@@ -116,6 +116,15 @@ class BooksPresenter extends Presenter
 
 Also you can see that paginator can be rendered with `{control booksGrid:paginator}`.
 
+These latte macros can't be used as "non-attribute" macros, so there are also variants written in camelCase:
+
+* `noGrid`
+* `noGridDataAs`
+* `noGridViewsAs`
+* `noGridNotEmpty`
+* `noGridEmpty`
+* `noGridHasPaginator`
+
 ## Views
 
 Imagine that you want to create for example two tabs - "Active books" and "Sold books". This can be easily done with 
