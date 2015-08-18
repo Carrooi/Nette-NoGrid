@@ -72,7 +72,7 @@ class DoctrineQueryObjectDataSource implements IDataSource
 	 */
 	public function getCount()
 	{
-		return $this->getResultSet()->getTotalCount();
+		return $this->getResultSet()->count();
 	}
 
 
