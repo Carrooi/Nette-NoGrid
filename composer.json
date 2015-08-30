@@ -25,7 +25,7 @@
 	"require-dev": {
 		"codeception/codeception": "~2.1",
 		"codeception/mockery-module": "~0.2",
-		"guzzlehttp/guzzle": "~6.0"
+		"guzzlehttp/guzzle": "~5.3"
 	},
 	"autoload": {
 		"psr-4": {
