@@ -16,18 +16,16 @@
 		"issues": "https://github.com/Carrooi/Nette-NoGrid/issues"
 	},
 	"require": {
+		"php": ">=5.4.0",
 		"nette/di": "~2.2",
 		"nette/application": "~2.2",
 		"latte/latte": "~2.2",
 		"kdyby/doctrine": ">=2.3"
 	},
 	"require-dev": {
-		"nette/bootstrap": "~2.2",
-		"nette/tester": "~1.5",
-		"nette/mail": "~2.2",
-		"nette/safe-stream": "~2.2",
-		"tracy/tracy": "~2.2",
-		"mockery/mockery": "~0.9.0"
+		"codeception/codeception": "~2.1",
+		"codeception/mockery-module": "~0.2",
+		"guzzlehttp/guzzle": "~6.0"
 	},
 	"autoload": {
 		"psr-4": {

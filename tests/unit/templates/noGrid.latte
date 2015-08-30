@@ -1,0 +1,31 @@
+<table n:no-grid="grid">
+	<thead>
+		<tr>
+			<th>
+				<ul>
+					<li n:no-grid-views-as="$view" data-name="{$view->getName()}" n:class="$view->isCurrent() ? active">
+						<a href="{$view->getLink()}">{$view->getTitle()}</a>
+					</li>
+				</ul>
+			</th>
+		</tr>
+		<tr>
+			<th>
+				Number
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr n:no-grid-data-as="$line">
+			<td>{$line[number]}</td>
+		</tr>
+		<tr n:no-grid-empty>
+			<td>Empty</td>
+		</tr>
+	</tbody>
+	<tfoot n:no-grid-has-paginator>
+		<tr>
+			<td>Paginator</td>
+		</tr>
+	</tfoot>
+</table>
