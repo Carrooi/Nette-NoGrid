@@ -173,9 +173,9 @@ protected function createComponentBooksGrid()
 ```smarty
 <div n:no-grid="booksGrid">
 	<ul>
-		<li n:no-grid-views-as="$view">
-			<a href="{$view->link}">
-				{$view->title}
+		<li n:no-grid-views-as="$view" n:class="$view->isCurrent() ? active">
+			<a href="{$view->getLink()}">
+				{$view->getTitle()}
 			</a>
 		</li>
 	</ul>

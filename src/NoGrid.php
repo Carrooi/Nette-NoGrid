@@ -5,6 +5,7 @@ namespace Carrooi\NoGrid;
 use Carrooi\NoGrid\DataSource\IDataSource;
 use Nette\Application\BadRequestException;
 use Nette\Application\UI\Control;
+use Nette\Application\UI\Presenter;
 
 /**
  *
@@ -17,7 +18,7 @@ class NoGrid extends Control
 	/** @var \Carrooi\NoGrid\DataSource\IDataSource */
 	private $dataSource;
 
-	/** @var array */
+	/** @var \Carrooi\NoGrid\View[] */
 	private $views = [];
 
 	/** @var bool */
@@ -48,6 +49,23 @@ class NoGrid extends Control
 		parent::__construct();
 
 		$this->dataSource = $dataSource;
+
+		$this->monitor('Nette\Application\UI\Presenter');
+	}
+
+
+	/**
+	 * @param \Nette\Application\UI\Presenter $presenter
+	 */
+	public function attached($presenter)
+	{
+		parent::attached($presenter);
+
+		if ($presenter instanceof Presenter) {
+			foreach ($this->views as $view) {
+				$view->onAttached($this);
+			}
+		}
 	}
 
 
@@ -59,11 +77,7 @@ class NoGrid extends Control
 	 */
 	public function addView($name, $title, callable $fn)
 	{
-		$this->views[$name] = (object) [
-			'name' => $name,
-			'title' => $title,
-			'fn' => $fn,
-		];
+		$this->views[$name] = new View($name, $title, $fn);
 
 		return $this;
 	}
@@ -80,28 +94,11 @@ class NoGrid extends Control
 
 
 	/**
-	 * @return array
+	 * @return \Carrooi\NoGrid\View[]
 	 */
 	public function getViews()
 	{
-		$first = true;
-
-		return array_map(function($view) use (&$first) {
-			$v = [
-				'title' => $view->title,
-			];
-
-			if ($this->getPresenter(false)) {
-				$name = $first ? '' : $view->name;
-				$first = false;
-
-				$v['link'] = $this->link('this!', ['view' => $name, 'paginator-page' => null]);
-			} else {
-				$v['link'] = null;
-			}
-
-			return (object) $v;
-		}, $this->views);
+		return array_values($this->views);
 	}
 
 
@@ -188,9 +185,7 @@ class NoGrid extends Control
 		if ($this->data === null) {
 			if ($this->view !== '') {
 				$data = &$this->dataSource->getData();
-				$fn = $this->views[$this->view]->fn;
-
-				$fn($data);
+				$this->views[$this->view]->limitData($data);
 			}
 
 			$this->totalCount = $this->dataSource->getCount();
