@@ -1,3 +1,6 @@
+[![Build Status](https://img.shields.io/travis/Carrooi/Nette-NoGrid.svg?style=flat-square)](https://travis-ci.org/Carrooi/Nette-NoGrid)
+[![Donate](https://img.shields.io/badge/donate-PayPal-brightgreen.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=T9SAY3LZL3YAA)
+
 # NoGrid
 
 Definitely not a grid, just a simple control for printing data in customized templates with paginator.
