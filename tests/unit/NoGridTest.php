@@ -25,7 +25,8 @@ final class NoGridTest extends Test
 		parent::setUp();
 
 		$this->source = \Mockery::mock('Carrooi\NoGrid\DataSource\IDataSource');
-		$this->grid = new NoGrid($this->source);
+		$paginatorTemplateProvider = \Mockery::mock('Carrooi\NoGrid\IPaginatorTemplateProvider');
+		$this->grid = new NoGrid($this->source, $paginatorTemplateProvider);
 	}
 
 

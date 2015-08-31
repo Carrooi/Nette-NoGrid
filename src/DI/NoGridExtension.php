@@ -17,6 +17,7 @@ class NoGridExtension extends DI\CompilerExtension
 		'itemsPerPage' => 10,
 		'paginator' => [
 			'template' => null,
+			'templateProvider' => 'Carrooi\NoGrid\DefaultPaginatorTemplateProvider',
 		],
 	];
 
@@ -26,8 +27,16 @@ class NoGridExtension extends DI\CompilerExtension
 		$config = $this->validateConfig($this->defaults);
 		$builder = $this->getContainerBuilder();
 
+		$paginatorTemplateProvider = $builder->getByType($config['paginator']['templateProvider']);
+		if (!$paginatorTemplateProvider) {
+			$paginatorTemplateProvider = $this->prefix('paginatorTemplateProvider');
+			$builder->addDefinition($paginatorTemplateProvider)
+				->setClass($config['paginator']['templateProvider']);
+		}
+
 		$grid = $builder->addDefinition($this->prefix('grid'))
 			->setClass('Carrooi\NoGrid\NoGrid')
+			->setArguments(['...', '@'. $paginatorTemplateProvider])
 			->setImplement('Carrooi\NoGrid\INoGridFactory')
 			->addSetup('setItemsPerPage', [$config['itemsPerPage']]);
 

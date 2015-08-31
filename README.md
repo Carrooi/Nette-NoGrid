@@ -48,10 +48,12 @@ grid:
 	itemsPerPage: 20
 	paginator:
 		template: %appDir%/paginator.latte
+		templateProvider: App\Grid\TemplateProvider
 ```
 
 * `itemsPerPage`: default is 10
 * `paginator/template`: not required
+* `paginator/templateProvider`: class name for template provider, must be an instance of `Carrooi\NoGrid\IPaginatorTemplateProvider` interface. Not required
 
 ## Definition
 

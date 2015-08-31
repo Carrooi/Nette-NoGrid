@@ -18,6 +18,9 @@ class NoGrid extends Control
 	/** @var \Carrooi\NoGrid\DataSource\IDataSource */
 	private $dataSource;
 
+	/** @var \Carrooi\NoGrid\IPaginatorTemplateProvider */
+	private $paginatorTemplateProvider;
+
 	/** @var \Carrooi\NoGrid\View[] */
 	private $views = [];
 
@@ -46,12 +49,14 @@ class NoGrid extends Control
 
 	/**
 	 * @param \Carrooi\NoGrid\DataSource\IDataSource $dataSource
+	 * @param \Carrooi\NoGrid\IPaginatorTemplateProvider $paginatorTemplateProvider
 	 */
-	public function __construct(IDataSource $dataSource)
+	public function __construct(IDataSource $dataSource, IPaginatorTemplateProvider $paginatorTemplateProvider)
 	{
 		parent::__construct();
 
 		$this->dataSource = $dataSource;
+		$this->paginatorTemplateProvider = $paginatorTemplateProvider;
 
 		$this->monitor('Nette\Application\UI\Presenter');
 	}
@@ -245,7 +250,7 @@ class NoGrid extends Control
 	 */
 	protected function createComponentPaginator()
 	{
-		return new VisualPaginator;
+		return new VisualPaginator($this->paginatorTemplateProvider);
 	}
 
 

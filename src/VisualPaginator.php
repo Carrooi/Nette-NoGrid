@@ -16,6 +16,9 @@ class VisualPaginator extends Control
 	/** @var \Nette\Utils\Paginator */
 	private $paginator;
 
+	/** @var \Carrooi\NoGrid\IPaginatorTemplateProvider */
+	private $templateProvider;
+
 	/** @var string */
 	private $templatePath;
 
@@ -24,12 +27,12 @@ class VisualPaginator extends Control
 	public $page = 1;
 
 
-	public function __construct()
+	public function __construct(IPaginatorTemplateProvider $templateProvider)
 	{
 		parent::__construct();
 
+		$this->templateProvider = $templateProvider;
 		$this->paginator = new Paginator;
-		$this->templatePath = __DIR__. '/templates/paginator.latte';
 	}
 
 
@@ -47,6 +50,10 @@ class VisualPaginator extends Control
 	 */
 	public function getTemplatePath()
 	{
+		if (!$this->templatePath) {
+			$this->templatePath = $this->templateProvider->getTemplatePath();
+		}
+
 		return $this->templatePath;
 	}
 
@@ -117,7 +124,7 @@ class VisualPaginator extends Control
 		$this->template->paginator = $this->paginator;
 		$this->template->steps = $this->getSteps();
 
-		$this->template->setFile($this->templatePath);
+		$this->template->setFile($this->getTemplatePath());
 		$this->template->render();
 	}
 
