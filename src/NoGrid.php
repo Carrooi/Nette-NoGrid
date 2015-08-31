@@ -184,7 +184,13 @@ class NoGrid extends Control
 	public function getTotalCount()
 	{
 		if ($this->totalCount === null) {
-			$this->getData();
+			if ($this->data === null) {
+				$this->getData();
+			}
+
+			if ($this->totalCount === null) {
+				$this->totalCount = $this->dataSource->getCount();
+			}
 		}
 
 		return $this->totalCount;
@@ -202,9 +208,9 @@ class NoGrid extends Control
 				$this->views[$this->view]->limitData($data);
 			}
 
-			$this->totalCount = $this->dataSource->getCount();
-
 			if ($this->paginatorEnabled) {
+				$this->totalCount = $this->dataSource->getCount();
+
 				$vp = $this['paginator'];
 				$paginator = $vp->getPaginator();
 

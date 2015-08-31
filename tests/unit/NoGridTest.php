@@ -4,7 +4,6 @@ namespace CarrooiTests\Unit;
 
 use Carrooi\NoGrid\NoGrid;
 use Codeception\TestCase\Test;
-use Codeception\Util\Debug;
 
 /**
  *
@@ -83,7 +82,6 @@ final class NoGridTest extends Test
 		$data = [1, 2, 3, 4, 5];
 
 		$this->source
-			->shouldReceive('getCount')->once()->andReturn(2)->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
 
 		$this->grid->disablePaginator();
@@ -92,12 +90,38 @@ final class NoGridTest extends Test
 	}
 
 
+	public function testGetTotalCount_withPaginator()
+	{
+		$data = [1, 2, 3, 4, 5];
+
+		$this->source
+			->shouldReceive('getCount')->once()->andReturn(5)->getMock()
+			->shouldReceive('limit')->once()->getMock()
+			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
+
+		$this->assertSame(5, $this->grid->getTotalCount());
+	}
+
+
+	public function testGetTotalCount_withoutPaginator()
+	{
+		$data = [1, 2, 3, 4, 5];
+
+		$this->source
+			->shouldReceive('getCount')->once()->andReturn(5)->getMock()
+			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
+
+		$this->grid->disablePaginator();
+
+		$this->assertSame(5, $this->grid->getTotalCount());
+	}
+
+
 	public function testGetData_transformData()
 	{
 		$data = [1, 2, 3, 4, 5];
 
 		$this->source
-			->shouldReceive('getCount')->once()->andReturn(2)->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
 
 		$this->grid->disablePaginator();
@@ -132,7 +156,6 @@ final class NoGridTest extends Test
 
 		$this->source
 			->shouldReceive('getData')->once()->andReturn($data)->getMock()
-			->shouldReceive('getCount')->once()->andReturn(2)->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
 
 		$viewCalled = false;
