@@ -92,6 +92,26 @@ final class NoGridTest extends Test
 	}
 
 
+	public function testGetData_transformData()
+	{
+		$data = [1, 2, 3, 4, 5];
+
+		$this->source
+			->shouldReceive('getCount')->once()->andReturn(2)->getMock()
+			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
+
+		$this->grid->disablePaginator();
+
+		$this->grid->transformData(function($number) {
+			return $number + 1;
+		});
+
+		$this->assertSame([
+			2, 3, 4, 5, 6
+		], $this->grid->getData());
+	}
+
+
 	public function testGetData_withPaginator()
 	{
 		$itemsPerPage = $this->grid->getItemsPerPage();

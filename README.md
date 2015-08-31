@@ -82,6 +82,17 @@ class BooksPresenter extends Presenter
 }
 ```
 
+## Transform data loaded from data source
+
+```php
+$grid->transformData(function($line) {
+	return [
+		'id' => $line->getId(),
+		'title' => $line->getTitle(),
+	];
+});
+```
+
 ## Printing
 
 ```smarty

@@ -24,6 +24,9 @@ class NoGrid extends Control
 	/** @var bool */
 	private $paginatorEnabled = true;
 
+	/** @var callable */
+	private $transformData;
+
 	/** @var int */
 	private $itemsPerPage = 10;
 
@@ -132,6 +135,17 @@ class NoGrid extends Control
 
 
 	/**
+	 * @param callable $fn
+	 * @return $this
+	 */
+	public function transformData(callable $fn)
+	{
+		$this->transformData = $fn;
+		return $this;
+	}
+
+
+	/**
 	 * @return int
 	 */
 	public function getItemsPerPage()
@@ -201,6 +215,10 @@ class NoGrid extends Control
 			}
 
 			$this->data = $this->dataSource->fetchData();
+
+			if ($this->transformData) {
+				$this->data = array_map($this->transformData, $this->data);
+			}
 		}
 
 		return $this->data;
