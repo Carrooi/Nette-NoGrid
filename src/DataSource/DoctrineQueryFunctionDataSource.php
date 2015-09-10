@@ -15,7 +15,7 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 	/** @var \Doctrine\ORM\EntityRepository */
 	private $repository;
 
-	/** @var \Carrooi\NoGrid\DataSource\DoctrineQueryFunction */
+	/** @var \Carrooi\NoGrid\DataSource\IDoctrineQueryFunction */
 	private $queryDefinition;
 
 	/** @var \Carrooi\NoGrid\DataSource\DoctrineDataSource */
@@ -24,9 +24,9 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 
 	/**
 	 * @param \Doctrine\ORM\EntityRepository $repository
-	 * @param \Carrooi\NoGrid\DataSource\DoctrineQueryFunction $queryDefinition
+	 * @param \Carrooi\NoGrid\DataSource\IDoctrineQueryFunction $queryDefinition
 	 */
-	public function __construct(EntityRepository $repository, DoctrineQueryFunction $queryDefinition)
+	public function __construct(EntityRepository $repository, IDoctrineQueryFunction $queryDefinition)
 	{
 		$this->repository = $repository;
 		$this->queryDefinition = $queryDefinition;
@@ -34,7 +34,7 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 
 
 	/**
-	 * @return \Carrooi\NoGrid\DataSource\DoctrineQueryFunction
+	 * @return \Carrooi\NoGrid\DataSource\IDoctrineQueryFunction
 	 */
 	public function getQueryDefinition()
 	{
@@ -62,8 +62,8 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 	 */
 	public function getCount()
 	{
-		if ($query = $this->queryDefinition->getCount($this->repository)) {
-			return (int) $query->getQuery()->getSingleScalarResult();
+		if ($this->queryDefinition instanceof IDoctrineQueryFunctionCountable) {
+			return (int) $this->queryDefinition->getCountQueryBuilder($this->repository)->getQuery()->getSingleScalarResult();
 		} else {
 			return $this->getQueryDataSource()->getCount();
 		}
