@@ -43,6 +43,46 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 
 
 	/**
+	 * @return int
+	 */
+	public function getHydrationMode()
+	{
+		return $this->getQueryDataSource()->getHydrationMode();
+	}
+
+
+	/**
+	 * @param int $hydrationMode
+	 * @return $this
+	 */
+	public function setHydrationMode($hydrationMode)
+	{
+		$this->getQueryDataSource()->setHydrationMode($hydrationMode);
+		return $this;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function getUseOutputWalkers()
+	{
+		return $this->getQueryDataSource()->getUseOutputWalkers();
+	}
+
+
+	/**
+	 * @param bool $useOutputWalkers
+	 * @return $this
+	 */
+	public function setUseOutputWalkers($useOutputWalkers)
+	{
+		$this->getQueryDataSource()->setUseOutputWalkers($useOutputWalkers);
+		return $this;
+	}
+
+
+	/**
 	 * @return \Carrooi\NoGrid\DataSource\DoctrineDataSource
 	 */
 	private function getQueryDataSource()
