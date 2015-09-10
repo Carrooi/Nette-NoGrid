@@ -205,7 +205,8 @@ protected function createComponentBooksGrid()
 
 * `Carrooi\NoGrid\DataSource\ArrayDataSource(array)`
 * `Carrooi\NoGrid\DataSource\DoctrineDataSource(Doctrine\ORM\QueryBuilder)`
-* `Carrooi\NoGrid\DataSource\DoctrineQueryObjectDataSource(Kdyby\Doctrine\QueryObject, Kdyby\Persistence\Queryable)`
+* `Carrooi\NoGrid\DataSource\DoctrineQueryObjectDataSource(Kdyby\Persistence\Queryable, Kdyby\Doctrine\QueryObject)`
+* `Carrooi\NoGrid\DataSource\DoctrineQueryFunctionDataSource(Kdyby\Persistence\Queryable, Carrooi\NoGrid\DataSource\DoctrineQueryFunction)`
 
 ## Changelog
 
