@@ -83,6 +83,26 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 
 
 	/**
+	 * @return bool
+	 */
+	public function getFetchJoinCollections()
+	{
+		return $this->getQueryDataSource()->getFetchJoinCollections();
+	}
+
+
+	/**
+	 * @param bool $fetchJoinCollections
+	 * @return $this
+	 */
+	public function setFetchJoinCollections($fetchJoinCollections)
+	{
+		$this->getQueryDataSource()->setFetchJoinCollections($fetchJoinCollections);
+		return $this;
+	}
+
+
+	/**
 	 * @return \Carrooi\NoGrid\DataSource\DoctrineDataSource
 	 */
 	private function getQueryDataSource()

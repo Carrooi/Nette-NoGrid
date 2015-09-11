@@ -24,6 +24,9 @@ class DoctrineDataSource implements IDataSource
 	/** @var bool */
 	private $useOutputWalkers;
 
+	/** @var bool */
+	private $fetchJoinCollections = true;
+
 
 	/**
 	 * @param \Doctrine\ORM\QueryBuilder $qb
@@ -84,6 +87,26 @@ class DoctrineDataSource implements IDataSource
 
 
 	/**
+	 * @return bool
+	 */
+	public function getFetchJoinCollections()
+	{
+		return $this->fetchJoinCollections;
+	}
+
+
+	/**
+	 * @param bool $fetchJoinCollections
+	 * @return $this
+	 */
+	public function setFetchJoinCollections($fetchJoinCollections)
+	{
+		$this->fetchJoinCollections = (bool) $fetchJoinCollections;
+		return $this;
+	}
+
+
+	/**
 	 * @return int
 	 */
 	public function getCount()
@@ -112,7 +135,7 @@ class DoctrineDataSource implements IDataSource
 		$query->setHydrationMode($this->hydrationMode);
 
 		if ($this->qb->getMaxResults() !== null || $this->qb->getFirstResult() !== null) {
-			$result = new Paginator($query);
+			$result = new Paginator($query, $this->fetchJoinCollections);
 
 			if ($this->useOutputWalkers !== null) {
 				$result->setUseOutputWalkers($this->useOutputWalkers);
