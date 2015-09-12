@@ -18,14 +18,4 @@ interface IDoctrineQueryFunction
 	 */
 	public function __invoke(EntityRepository $repository);
 
-
-	/**
-	 * @param \Doctrine\ORM\EntityRepository $repository
-	 * @return \Doctrine\ORM\QueryBuilder
-	 */
-	//public function getCount(EntityRepository $repository)
-	//{
-
-	//}
-
 }

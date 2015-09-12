@@ -3,12 +3,13 @@
 namespace Carrooi\NoGrid\DataSource;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  *
  * @author David Kudera <kudera.d@gmail.com>
  */
-class DoctrineQueryFunctionDataSource implements IDataSource
+class DoctrineQueryFunctionDataSource extends BaseDoctrineDataSource implements IDataSource
 {
 
 
@@ -18,8 +19,8 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 	/** @var \Carrooi\NoGrid\DataSource\IDoctrineQueryFunction */
 	private $queryDefinition;
 
-	/** @var \Carrooi\NoGrid\DataSource\DoctrineDataSource */
-	private $queryDataSource;
+	/** @var \Doctrine\ORM\QueryBuilder */
+	private $qb;
 
 
 	/**
@@ -43,76 +44,15 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 
 
 	/**
-	 * @return int
+	 * @return \Doctrine\ORM\QueryBuilder
 	 */
-	public function getHydrationMode()
+	public function getQueryBuilder()
 	{
-		return $this->getQueryDataSource()->getHydrationMode();
-	}
-
-
-	/**
-	 * @param int $hydrationMode
-	 * @return $this
-	 */
-	public function setHydrationMode($hydrationMode)
-	{
-		$this->getQueryDataSource()->setHydrationMode($hydrationMode);
-		return $this;
-	}
-
-
-	/**
-	 * @return bool
-	 */
-	public function getUseOutputWalkers()
-	{
-		return $this->getQueryDataSource()->getUseOutputWalkers();
-	}
-
-
-	/**
-	 * @param bool $useOutputWalkers
-	 * @return $this
-	 */
-	public function setUseOutputWalkers($useOutputWalkers)
-	{
-		$this->getQueryDataSource()->setUseOutputWalkers($useOutputWalkers);
-		return $this;
-	}
-
-
-	/**
-	 * @return bool
-	 */
-	public function getFetchJoinCollections()
-	{
-		return $this->getQueryDataSource()->getFetchJoinCollections();
-	}
-
-
-	/**
-	 * @param bool $fetchJoinCollections
-	 * @return $this
-	 */
-	public function setFetchJoinCollections($fetchJoinCollections)
-	{
-		$this->getQueryDataSource()->setFetchJoinCollections($fetchJoinCollections);
-		return $this;
-	}
-
-
-	/**
-	 * @return \Carrooi\NoGrid\DataSource\DoctrineDataSource
-	 */
-	private function getQueryDataSource()
-	{
-		if (!$this->queryDataSource) {
-			$query = $this->queryDefinition;
-			$this->queryDataSource = new DoctrineDataSource($query($this->repository));
+		if (!$this->qb) {
+			$this->qb = $this->queryDefinition->__invoke($this->repository);
 		}
 
-		return $this->queryDataSource;
+		return $this->qb;
 	}
 
 
@@ -125,17 +65,18 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 		if ($this->queryDefinition instanceof IDoctrineQueryFunctionCountable) {
 			return (int) $this->queryDefinition->getCountQueryBuilder($this->repository)->getQuery()->getSingleScalarResult();
 		} else {
-			return $this->getQueryDataSource()->getCount();
+			$paginator = new Paginator($this->getQueryBuilder()->getQuery());
+			return $paginator->count();
 		}
 	}
 
 
 	/**
-	 * @return mixed
+	 * @return \Carrooi\NoGrid\DataSource\IDoctrineQueryFunction
 	 */
 	public function &getData()
 	{
-		return $this->getQueryDataSource()->getData();
+		return $this->queryDefinition;
 	}
 
 
@@ -144,7 +85,16 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 	 */
 	public function fetchData()
 	{
-		return $this->getQueryDataSource()->fetchData();
+		$qb = $this->getQueryBuilder();
+
+		return self::fetchDataFromQuery(
+			$qb->getQuery(),
+			$this->getHydrationMode(),
+			$qb->getMaxResults(),
+			$qb->getFirstResult(),
+			$this->getFetchJoinCollections(),
+			$this->getUseOutputWalkers()
+		);
 	}
 
 
@@ -154,7 +104,9 @@ class DoctrineQueryFunctionDataSource implements IDataSource
 	 */
 	public function limit($offset, $limit)
 	{
-		$this->getQueryDataSource()->limit($offset, $limit);
+		$this->getQueryBuilder()
+			->setFirstResult($offset)
+			->setMaxResults($limit);
 	}
 
 }

@@ -2,7 +2,6 @@
 
 namespace Carrooi\NoGrid\DataSource;
 
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -11,21 +10,12 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
  *
  * @author David Kudera <kudera.d@gmail.com>
  */
-class DoctrineDataSource implements IDataSource
+class DoctrineDataSource extends BaseDoctrineDataSource implements IDataSource
 {
 
 
 	/** @var \Doctrine\ORM\QueryBuilder */
 	private $qb;
-
-	/** @var int */
-	private $hydrationMode = AbstractQuery::HYDRATE_OBJECT;
-
-	/** @var bool */
-	private $useOutputWalkers;
-
-	/** @var bool */
-	private $fetchJoinCollections = true;
 
 
 	/**
@@ -43,66 +33,6 @@ class DoctrineDataSource implements IDataSource
 	public function getQueryBuilder()
 	{
 		return $this->qb;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getHydrationMode()
-	{
-		return $this->hydrationMode;
-	}
-
-
-	/**
-	 * @param int $hydrationMode
-	 * @return $this
-	 */
-	public function setHydrationMode($hydrationMode)
-	{
-		$this->hydrationMode = $hydrationMode;
-		return $this;
-	}
-
-
-	/**
-	 * @return bool
-	 */
-	public function getUseOutputWalkers()
-	{
-		return $this->useOutputWalkers;
-	}
-
-
-	/**
-	 * @param bool $useOutputWalkers
-	 * @return $this
-	 */
-	public function setUseOutputWalkers($useOutputWalkers)
-	{
-		$this->useOutputWalkers = (bool) $useOutputWalkers;
-		return $this;
-	}
-
-
-	/**
-	 * @return bool
-	 */
-	public function getFetchJoinCollections()
-	{
-		return $this->fetchJoinCollections;
-	}
-
-
-	/**
-	 * @param bool $fetchJoinCollections
-	 * @return $this
-	 */
-	public function setFetchJoinCollections($fetchJoinCollections)
-	{
-		$this->fetchJoinCollections = (bool) $fetchJoinCollections;
-		return $this;
 	}
 
 
@@ -132,24 +62,15 @@ class DoctrineDataSource implements IDataSource
 	public function fetchData()
 	{
 		$query = $this->qb->getQuery();
-		$query->setHydrationMode($this->hydrationMode);
 
-		if ($this->qb->getMaxResults() !== null || $this->qb->getFirstResult() !== null) {
-			$result = new Paginator($query, $this->fetchJoinCollections);
-
-			if ($this->useOutputWalkers !== null) {
-				$result->setUseOutputWalkers($this->useOutputWalkers);
-			}
-		} else {
-			$result = $query->getResult();
-		}
-
-		$data = [];
-		foreach ($result as $item) {
-			$data[] = is_array($item) && array_key_exists(0, $item) ? $item[0] : $item;
-		}
-
-		return $data;
+		return self::fetchDataFromQuery(
+			$query,
+			$this->getHydrationMode(),
+			$this->qb->getMaxResults(),
+			$this->qb->getFirstResult(),
+			$this->getFetchJoinCollections(),
+			$this->getUseOutputWalkers()
+		);
 	}
 
 
