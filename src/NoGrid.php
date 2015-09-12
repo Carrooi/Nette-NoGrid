@@ -208,7 +208,7 @@ class NoGrid extends Control
 	public function getData()
 	{
 		if ($this->data === null) {
-			if ($this->view !== '') {
+			if ($this->hasView($this->view)) {
 				$data = &$this->dataSource->getData();
 				$this->views[$this->view]->limitData($data);
 			}
