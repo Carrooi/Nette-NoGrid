@@ -35,7 +35,7 @@ class View extends Object
 	 */
 	public function __construct($name, $title, callable $fn)
 	{
-		$this->name = $name;
+		$this->name = (string) $name;
 		$this->title = $title;
 		$this->fn = $fn;
 	}
