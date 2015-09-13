@@ -87,7 +87,7 @@ class DoctrineQueryFunctionDataSource extends BaseDoctrineDataSource implements 
 	{
 		$qb = $this->getQueryBuilder();
 
-		return self::fetchDataFromQuery(
+		$data = self::fetchDataFromQuery(
 			$qb->getQuery(),
 			$this->getHydrationMode(),
 			$qb->getMaxResults(),
@@ -95,6 +95,14 @@ class DoctrineQueryFunctionDataSource extends BaseDoctrineDataSource implements 
 			$this->getFetchJoinCollections(),
 			$this->getUseOutputWalkers()
 		);
+
+		if ($this->queryDefinition instanceof IDoctrineMultiQueryFunction) {
+			if (($dataUpdated = $this->queryDefinition->postFetch($this->repository, $data)) !== null) {
+				$data = $dataUpdated;
+			}
+		}
+
+		return $data;
 	}
 
 
