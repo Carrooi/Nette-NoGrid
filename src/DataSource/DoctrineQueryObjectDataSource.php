@@ -2,6 +2,7 @@
 
 namespace Carrooi\NoGrid\DataSource;
 
+use Doctrine\ORM\AbstractQuery;
 use Kdyby\Doctrine\QueryObject;
 use Kdyby\Persistence\Queryable;
 
@@ -9,7 +10,7 @@ use Kdyby\Persistence\Queryable;
  *
  * @author David Kudera <kudera.d@gmail.com>
  */
-class DoctrineQueryObjectDataSource extends BaseDoctrineDataSource implements IDataSource
+class DoctrineQueryObjectDataSource implements IDataSource
 {
 
 
@@ -22,6 +23,9 @@ class DoctrineQueryObjectDataSource extends BaseDoctrineDataSource implements ID
 	/** @var \Kdyby\Doctrine\ResultSet */
 	private $resultSet;
 
+	/** @var int */
+	private $hydrationMode = AbstractQuery::HYDRATE_OBJECT;
+
 
 	/**
 	 * @param \Kdyby\Persistence\Queryable $repository
@@ -31,6 +35,26 @@ class DoctrineQueryObjectDataSource extends BaseDoctrineDataSource implements ID
 	{
 		$this->repository = $repository;
 		$this->query = $query;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getHydrationMode()
+	{
+		return $this->hydrationMode;
+	}
+
+
+	/**
+	 * @param int $hydrationMode
+	 * @return $this
+	 */
+	public function setHydrationMode($hydrationMode)
+	{
+		$this->hydrationMode = $hydrationMode;
+		return $this;
 	}
 
 
@@ -86,12 +110,7 @@ class DoctrineQueryObjectDataSource extends BaseDoctrineDataSource implements ID
 	private function getResultSet()
 	{
 		if (!$this->resultSet) {
-			$this->resultSet = $this->query->fetch($this->repository, $this->getHydrationMode());
-			$this->resultSet->setFetchJoinCollection($this->getFetchJoinCollections());
-
-			if ($this->hasUseOutputWalkers()) {
-				$this->resultSet->setUseOutputWalkers($this->getUseOutputWalkers());
-			}
+			$this->resultSet = $this->query->fetch($this->repository, $this->hydrationMode);
 		}
 
 		return $this->resultSet;
