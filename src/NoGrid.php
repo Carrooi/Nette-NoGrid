@@ -222,6 +222,10 @@ class NoGrid extends Control
 				$paginator->setItemsPerPage($this->getItemsPerPage());
 				$paginator->setItemCount($this->totalCount);
 
+				if ($this->totalCount === 0) {
+					return $this->data = [];
+				}
+
 				$this->dataSource->limit($paginator->getOffset(), $paginator->getItemsPerPage());
 			}
 
