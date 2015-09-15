@@ -2,7 +2,10 @@
 
 namespace Carrooi\NoGrid\DataSource;
 
+use Carrooi\NoGrid\InvalidArgumentException;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
@@ -19,8 +22,8 @@ class DoctrineQueryFunctionDataSource extends BaseDoctrineDataSource implements 
 	/** @var \Carrooi\NoGrid\DataSource\IDoctrineQueryFunction */
 	private $queryDefinition;
 
-	/** @var \Doctrine\ORM\QueryBuilder */
-	private $qb;
+	/** @var \Doctrine\ORM\Query */
+	private $query;
 
 
 	/**
@@ -44,15 +47,26 @@ class DoctrineQueryFunctionDataSource extends BaseDoctrineDataSource implements 
 
 
 	/**
-	 * @return \Doctrine\ORM\QueryBuilder
+	 * @return \Doctrine\ORM\Query
+	 * @throws \Carrooi\NoGrid\InvalidArgumentException
 	 */
-	public function getQueryBuilder()
+	public function getQuery()
 	{
-		if (!$this->qb) {
-			$this->qb = $this->queryDefinition->__invoke($this->repository);
+		if (!$this->query) {
+			$query = $this->queryDefinition->__invoke($this->repository);
+
+			if ($query instanceof QueryBuilder) {
+				$query = $query->getQuery();
+			}
+
+			if (!$query instanceof Query) {
+				throw new InvalidArgumentException('DoctrineQueryFunctionDataSource::__invoke must return instance of Query or QueryBuilder, '. get_class($query). ' given.');
+			}
+
+			$this->query = $query;
 		}
 
-		return $this->qb;
+		return $this->query;
 	}
 
 
@@ -63,9 +77,19 @@ class DoctrineQueryFunctionDataSource extends BaseDoctrineDataSource implements 
 	public function getCount()
 	{
 		if ($this->queryDefinition instanceof IDoctrineQueryFunctionCountable) {
-			return (int) $this->queryDefinition->getCountQueryBuilder($this->repository)->getQuery()->getSingleScalarResult();
+			$query = $this->queryDefinition->getCountQueryBuilder($this->repository);
+
+			if ($query instanceof QueryBuilder) {
+				$query = $query->getQuery();
+			}
+
+			if (!$query instanceof Query) {
+				throw new InvalidArgumentException('DoctrineQueryFunctionDataSource::getCountQueryBuilder must return instance of Query or QueryBuilder, '. get_class($query). ' given.');
+			}
+
+			return (int) $query->getSingleScalarResult();
 		} else {
-			$paginator = new Paginator($this->getQueryBuilder()->getQuery());
+			$paginator = new Paginator($this->getQuery());
 			return $paginator->count();
 		}
 	}
@@ -85,10 +109,10 @@ class DoctrineQueryFunctionDataSource extends BaseDoctrineDataSource implements 
 	 */
 	public function fetchData()
 	{
-		$qb = $this->getQueryBuilder();
+		$qb = $this->getQuery();
 
 		$data = self::fetchDataFromQuery(
-			$qb->getQuery(),
+			$qb,
 			$this->getHydrationMode(),
 			$qb->getMaxResults(),
 			$qb->getFirstResult(),
@@ -112,7 +136,7 @@ class DoctrineQueryFunctionDataSource extends BaseDoctrineDataSource implements 
 	 */
 	public function limit($offset, $limit)
 	{
-		$this->getQueryBuilder()
+		$this->getQuery()
 			->setFirstResult($offset)
 			->setMaxResults($limit);
 	}

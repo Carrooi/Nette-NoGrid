@@ -14,7 +14,7 @@ interface IDoctrineQueryFunction
 
 	/**
 	 * @param \Doctrine\ORM\EntityRepository $repository
-	 * @return \Doctrine\ORM\QueryBuilder
+	 * @return \Doctrine\ORM\QueryBuilder|\Doctrine\ORM\Query
 	 */
 	public function __invoke(EntityRepository $repository);
 
