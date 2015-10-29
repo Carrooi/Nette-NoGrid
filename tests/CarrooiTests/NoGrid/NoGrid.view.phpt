@@ -1,23 +1,39 @@
 <?php
 
-namespace CarrooiTests\Unit;
+/**
+ * Test: Carrooi\NoGrid\NoGrid
+ *
+ * @testCase CarrooiTests\NoGrid\NoGrid_ViewTest
+ */
 
+namespace CarrooiTests\NoGrid;
+
+use Carrooi\NoGrid\NoGrid;
 use Carrooi\NoGrid\View;
-use Codeception\TestCase\Test;
+use Tester\Assert;
+use Tester\TestCase;
+
+require_once __DIR__. '/../bootstrap.php';
 
 /**
  *
  * @author David Kudera <kudera.d@gmail.com>
  */
-class ViewTest extends Test
+class NoGrid_ViewTest extends TestCase
 {
+
+
+	public function tearDown()
+	{
+		\Mockery::close();
+	}
 
 
 	public function testName()
 	{
 		$view = new View('name', 'title', function() {});
 
-		$this->assertSame('name', $view->getName());
+		Assert::same('name', $view->getName());
 	}
 
 
@@ -25,7 +41,7 @@ class ViewTest extends Test
 	{
 		$view = new View('name', 'title', function() {});
 
-		$this->assertSame('title', $view->getTitle());
+		Assert::same('title', $view->getTitle());
 	}
 
 
@@ -36,19 +52,19 @@ class ViewTest extends Test
 			new View('view2', 'View 2', function() {}),
 		];
 
-		$grid = \Mockery::mock('Carrooi\NoGrid\NoGrid')
+		$grid = \Mockery::mock(NoGrid::class)
 			->shouldReceive('getViews')->twice()->andReturn($views)->getMock()
 			->shouldReceive('link')->once()->with('this!', ['view' => '', 'paginator-page' => null])->andReturn('link')->getMock()
 			->shouldReceive('link')->once()->with('this!', ['view' => 'view2', 'paginator-page' => null])->andReturn('link')->getMock();
 
-		$this->assertNull($views[0]->getLink());
-		$this->assertNull($views[1]->getLink());
+		Assert::null($views[0]->getLink());
+		Assert::null($views[1]->getLink());
 
 		$views[0]->onAttached($grid);
 		$views[1]->onAttached($grid);
 
-		$this->assertSame('link', $views[0]->getLink());
-		$this->assertSame('link', $views[1]->getLink());
+		Assert::same('link', $views[0]->getLink());
+		Assert::same('link', $views[1]->getLink());
 	}
 
 
@@ -59,21 +75,24 @@ class ViewTest extends Test
 			new View('view2', 'View 2', function() {}),
 		];
 
-		$grid = \Mockery::mock('Carrooi\NoGrid\NoGrid')
+		$grid = \Mockery::mock(NoGrid::class)
 			->shouldReceive('getViews')->twice()->andReturn($views)->getMock()
 			->shouldReceive('link')->once()->with('this!', ['view' => '', 'paginator-page' => null])->andReturn('link')->getMock()
 			->shouldReceive('link')->once()->with('this!', ['view' => 'view2', 'paginator-page' => null])->andReturn('link')->getMock();
 
 		$grid->view = 'view1';
 
-		$this->assertFalse($views[0]->isCurrent());
-		$this->assertFalse($views[1]->isCurrent());
+		Assert::false($views[0]->isCurrent());
+		Assert::false($views[1]->isCurrent());
 
 		$views[0]->onAttached($grid);
 		$views[1]->onAttached($grid);
 
-		$this->assertTrue($views[0]->isCurrent());
-		$this->assertFalse($views[1]->isCurrent());
+		Assert::true($views[0]->isCurrent());
+		Assert::false($views[1]->isCurrent());
 	}
 
 }
+
+
+run(new NoGrid_ViewTest);

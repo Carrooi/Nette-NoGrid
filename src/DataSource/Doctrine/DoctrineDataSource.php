@@ -1,25 +1,26 @@
 <?php
 
-namespace Carrooi\NoGrid\DataSource;
+namespace Carrooi\NoGrid\DataSource\Doctrine;
 
-use Doctrine\ORM\QueryBuilder;
+use Carrooi\NoGrid\DataSource\IDataSource;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Kdyby\Doctrine\QueryBuilder;
 
 
 /**
  *
  * @author David Kudera <kudera.d@gmail.com>
  */
-class DoctrineDataSource extends BaseDoctrineDataSource implements IDataSource
+class DoctrineDataSource extends BaseDataSource implements IDataSource
 {
 
 
-	/** @var \Doctrine\ORM\QueryBuilder */
+	/** @var \Kdyby\Doctrine\QueryBuilder */
 	private $qb;
 
 
 	/**
-	 * @param \Doctrine\ORM\QueryBuilder $qb
+	 * @param \Kdyby\Doctrine\QueryBuilder $qb
 	 */
 	public function __construct(QueryBuilder $qb)
 	{
@@ -28,7 +29,7 @@ class DoctrineDataSource extends BaseDoctrineDataSource implements IDataSource
 
 
 	/**
-	 * @return \Doctrine\ORM\QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function getQueryBuilder()
 	{
@@ -41,14 +42,12 @@ class DoctrineDataSource extends BaseDoctrineDataSource implements IDataSource
 	 */
 	public function getCount()
 	{
-		$paginator = new Paginator($this->qb->getQuery());
-
-		return $paginator->count();
+		return (new Paginator($this->qb->getQuery()))->count();
 	}
 
 
 	/**
-	 * @return \Doctrine\ORM\QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function &getData()
 	{

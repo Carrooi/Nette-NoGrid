@@ -8,6 +8,10 @@ Definitely not a grid, just a simple control for printing data in customized tem
 It's not a good thing to always just show some automatically generated grid with data, mainly in frontend and that 
 package is for that moments.
 
+## BC Break!
+
+Be careful, this package was completely rewritten with version 2.0.0. Please read the new readme.
+
 ## Features
 
 **It has:**
@@ -204,6 +208,6 @@ protected function createComponentBooksGrid()
 ## Data sources
 
 * `Carrooi\NoGrid\DataSource\ArrayDataSource(array)`
-* `Carrooi\NoGrid\DataSource\DoctrineDataSource(Doctrine\ORM\QueryBuilder)`
-* `Carrooi\NoGrid\DataSource\DoctrineQueryObjectDataSource(Kdyby\Persistence\Queryable, Kdyby\Doctrine\QueryObject)`
-* `Carrooi\NoGrid\DataSource\DoctrineQueryFunctionDataSource(Kdyby\Persistence\Queryable, Carrooi\NoGrid\DataSource\DoctrineQueryFunction)`
+* `Carrooi\NoGrid\DataSource\Doctrine\DataSource(Doctrine\ORM\QueryBuilder)`
+* `Carrooi\NoGrid\DataSource\Doctrine\QueryObjectDataSource(Kdyby\Persistence\Queryable, Kdyby\Doctrine\QueryObject)`
+* `Carrooi\NoGrid\DataSource\Doctrine\QueryFunctionDataSource(Kdyby\Persistence\Queryable, Carrooi\NoGrid\DataSource\DoctrineQueryFunction)`

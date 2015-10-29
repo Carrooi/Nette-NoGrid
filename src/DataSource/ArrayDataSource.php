@@ -11,6 +11,9 @@ class ArrayDataSource implements IDataSource
 
 
 	/** @var array */
+	private $dataDefinition;
+
+	/** @var array */
 	private $data;
 
 
@@ -19,7 +22,7 @@ class ArrayDataSource implements IDataSource
 	 */
 	public function __construct(array $data)
 	{
-		$this->data = $data;
+		$this->dataDefinition = $data;
 	}
 
 
@@ -28,7 +31,7 @@ class ArrayDataSource implements IDataSource
 	 */
 	public function getCount()
 	{
-		return count($this->data);
+		return count($this->dataDefinition);
 	}
 
 
@@ -37,7 +40,7 @@ class ArrayDataSource implements IDataSource
 	 */
 	public function &getData()
 	{
-		return $this->data;
+		return $this->dataDefinition;
 	}
 
 
@@ -46,6 +49,10 @@ class ArrayDataSource implements IDataSource
 	 */
 	public function fetchData()
 	{
+		if ($this->data === null) {
+			$this->data = $this->dataDefinition;
+		}
+
 		return $this->data;
 	}
 
@@ -56,7 +63,7 @@ class ArrayDataSource implements IDataSource
 	 */
 	public function limit($offset, $limit)
 	{
-		$this->data = array_slice($this->data, $offset, $limit);
+		$this->data = array_slice($this->fetchData(), $offset, $limit);
 	}
 
 }

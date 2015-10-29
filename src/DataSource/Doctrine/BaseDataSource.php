@@ -1,6 +1,7 @@
 <?php
 
-namespace Carrooi\NoGrid\DataSource;
+namespace Carrooi\NoGrid\DataSource\Doctrine;
+
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -9,7 +10,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
  *
  * @author David Kudera <kudera.d@gmail.com>
  */
-abstract class BaseDoctrineDataSource
+abstract class BaseDataSource
 {
 
 

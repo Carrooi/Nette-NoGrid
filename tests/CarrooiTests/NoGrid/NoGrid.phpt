@@ -1,15 +1,27 @@
 <?php
 
-namespace CarrooiTests\Unit;
+/**
+ * Test: Carrooi\NoGrid\NoGrid
+ *
+ * @testCase CarrooiTests\NoGrid\NoGridTest
+ */
 
+namespace CarrooiTests\NoGrid;
+
+use Carrooi\NoGrid\DataSource\IDataSource;
+use Carrooi\NoGrid\IPaginatorTemplateProvider;
 use Carrooi\NoGrid\NoGrid;
-use Codeception\TestCase\Test;
+use Carrooi\NoGrid\View;
+use Tester\Assert;
+use Tester\TestCase;
+
+require_once __DIR__. '/../bootstrap.php';
 
 /**
  *
  * @author David Kudera <kudera.d@gmail.com>
  */
-final class NoGridTest extends Test
+class NoGridTest extends TestCase
 {
 
 
@@ -22,59 +34,66 @@ final class NoGridTest extends Test
 
 	public function setUp()
 	{
-		parent::setUp();
+		$this->source = \Mockery::mock(IDataSource::class);
 
-		$this->source = \Mockery::mock('Carrooi\NoGrid\DataSource\IDataSource');
-		$paginatorTemplateProvider = \Mockery::mock('Carrooi\NoGrid\IPaginatorTemplateProvider');
+		/** @var \Mockery\MockInterface|\Carrooi\NoGrid\IPaginatorTemplateProvider $paginatorTemplateProvider */
+		$paginatorTemplateProvider = \Mockery::mock(IPaginatorTemplateProvider::class);
+
 		$this->grid = new NoGrid($this->source, $paginatorTemplateProvider);
+	}
+
+
+	public function tearDown()
+	{
+		\Mockery::close();
 	}
 
 
 	public function testViews()
 	{
-		$this->assertCount(0, $this->grid->getViews());
+		Assert::count(0, $this->grid->getViews());
 
 		$this->grid->addView('view1', 'View 1', function() {});
 		$this->grid->addView('view2', 'View 2', function() {});
 
-		$this->assertTrue($this->grid->hasView('view1'));
-		$this->assertTrue($this->grid->hasView('view2'));
-		$this->assertFalse($this->grid->hasView('view3'));
+		Assert::true($this->grid->hasView('view1'));
+		Assert::true($this->grid->hasView('view2'));
+		Assert::false($this->grid->hasView('view3'));
 
 		$views = $this->grid->getViews();
 
-		$this->assertCount(2, $views);
-		$this->assertInstanceOf('Carrooi\NoGrid\View', $views[0]);
-		$this->assertInstanceOf('Carrooi\NoGrid\View', $views[1]);
+		Assert::count(2, $views);
+		Assert::type(View::class, $views[0]);
+		Assert::type(View::class, $views[1]);
 
-		$this->assertSame('view1', $views[0]->getName());
-		$this->assertSame('View 1', $views[0]->getTitle());
-		$this->assertSame('view2', $views[1]->getName());
-		$this->assertSame('View 2', $views[1]->getTitle());
+		Assert::same('view1', $views[0]->getName());
+		Assert::same('View 1', $views[0]->getTitle());
+		Assert::same('view2', $views[1]->getName());
+		Assert::same('View 2', $views[1]->getTitle());
 	}
 
 
 	public function testDisablePaginator()
 	{
-		$this->assertTrue($this->grid->isPaginatorEnabled());
+		Assert::true($this->grid->isPaginatorEnabled());
 
 		$this->grid->disablePaginator();
 
-		$this->assertFalse($this->grid->isPaginatorEnabled());
+		Assert::false($this->grid->isPaginatorEnabled());
 
 		$this->grid->enablePaginator();
 
-		$this->assertTrue($this->grid->isPaginatorEnabled());
+		Assert::true($this->grid->isPaginatorEnabled());
 	}
 
 
 	public function testItemsPerPage()
 	{
-		$this->assertInternalType('int', $this->grid->getItemsPerPage());
+		Assert::type('int', $this->grid->getItemsPerPage());
 
 		$this->grid->setItemsPerPage(50);
 
-		$this->assertSame(50, $this->grid->getItemsPerPage());
+		Assert::same(50, $this->grid->getItemsPerPage());
 	}
 
 
@@ -87,7 +106,7 @@ final class NoGridTest extends Test
 
 		$this->grid->disablePaginator();
 
-		$this->assertSame($data, $this->grid->getData());
+		Assert::same($data, $this->grid->getData());
 	}
 
 
@@ -100,7 +119,7 @@ final class NoGridTest extends Test
 			->shouldReceive('limit')->once()->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
 
-		$this->assertSame(5, $this->grid->getTotalCount());
+		Assert::same(5, $this->grid->getTotalCount());
 	}
 
 
@@ -114,7 +133,7 @@ final class NoGridTest extends Test
 
 		$this->grid->disablePaginator();
 
-		$this->assertSame(5, $this->grid->getTotalCount());
+		Assert::same(5, $this->grid->getTotalCount());
 	}
 
 
@@ -131,7 +150,7 @@ final class NoGridTest extends Test
 			return $number + 1;
 		});
 
-		$this->assertSame([
+		Assert::same([
 			2, 3, 4, 5, 6
 		], $this->grid->getData());
 	}
@@ -147,7 +166,7 @@ final class NoGridTest extends Test
 			->shouldReceive('limit')->once()->with(0, $itemsPerPage)->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
 
-		$this->assertSame($data, $this->grid->getData());
+		Assert::same($data, $this->grid->getData());
 	}
 
 
@@ -167,8 +186,11 @@ final class NoGridTest extends Test
 			$viewCalled = true;
 		});
 
-		$this->assertSame($data, $this->grid->getData());
-		$this->assertTrue($viewCalled);
+		Assert::same($data, $this->grid->getData());
+		Assert::true($viewCalled);
 	}
 
 }
+
+
+run(new NoGridTest);
