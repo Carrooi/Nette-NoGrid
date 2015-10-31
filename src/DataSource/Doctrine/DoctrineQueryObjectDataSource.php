@@ -1,7 +1,8 @@
 <?php
 
-namespace Carrooi\NoGrid\DataSource;
+namespace Carrooi\NoGrid\DataSource\Doctrine;
 
+use Carrooi\NoGrid\DataSource\IDataSource;
 use Doctrine\ORM\AbstractQuery;
 use Kdyby\Doctrine\QueryObject;
 use Kdyby\Persistence\Queryable;

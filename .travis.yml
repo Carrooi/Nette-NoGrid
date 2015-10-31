@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 5.4
   - 5.5
   - 5.6
   - 7.0
@@ -12,7 +11,7 @@ matrix:
     - php: 7.0
     - php: hhvm
 
-script: php ./vendor/bin/codecept run --debug --no-colors --steps
+script: ./vendor/bin/tester -s -p php -c ./tests/php.ini-unix ./tests/CarrooiTests/
 
 before_script:
   - travis_retry composer self-update

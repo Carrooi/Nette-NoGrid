@@ -1,17 +1,28 @@
 <?php
 
-namespace CarrooiTests\Unit;
+/**
+ * Test: Carrooi\NoGrid\NoGrid
+ *
+ * @testCase CarrooiTests\NoGrid\NoGrid_LatteTest
+ */
+
+namespace CarrooiTests\NoGrid;
 
 use Carrooi\NoGrid\Latte\Macros;
+use Carrooi\NoGrid\NoGrid;
 use Carrooi\NoGrid\View;
-use Codeception\TestCase\Test;
 use Latte;
+use Latte\CompileException;
+use Tester\Assert;
+use Tester\TestCase;
+
+require_once __DIR__. '/../bootstrap.php';
 
 /**
  *
  * @author David Kudera <kudera.d@gmail.com>
  */
-class NoGrid_LatteTest extends Test
+class NoGrid_LatteTest extends TestCase
 {
 
 
@@ -29,7 +40,13 @@ class NoGrid_LatteTest extends Test
 		$this->latte = new Latte\Engine;
 		Macros::install($this->latte->getCompiler());
 
-		$this->grid = \Mockery::mock('Carrooi\NoGrid\NoGrid');
+		$this->grid = \Mockery::mock(NoGrid::class);
+	}
+
+
+	public function tearDown()
+	{
+		\Mockery::close();
 	}
 
 
@@ -58,7 +75,7 @@ class NoGrid_LatteTest extends Test
 		$views[0]->onAttached($this->grid);
 		$views[1]->onAttached($this->grid);
 
-		$this->assertEquals(
+		Assert::equal(
 			file_get_contents(__DIR__. '/expected/noGrid.html'),
 			$this->latte->renderToString(
 				__DIR__. '/templates/noGrid.latte',
@@ -74,7 +91,7 @@ class NoGrid_LatteTest extends Test
 			->shouldReceive('getCount')->once()->andReturn(0)->getMock()
 			->shouldReceive('getData')->once()->andReturn([])->getMock();
 
-		$this->assertEquals(
+		Assert::equal(
 			file_get_contents(__DIR__. '/expected/noGrid.empty.html'),
 			$this->latte->renderToString(
 				__DIR__. '/templates/noGrid.empty.latte',
@@ -86,21 +103,24 @@ class NoGrid_LatteTest extends Test
 
 	public function testMacros_notInGrid()
 	{
-		$this->setExpectedException('Latte\CompileException', 'Macro no-grid-data-as must be inside of no-grid macro.');
-
-		$this->latte->renderToString(
-			__DIR__. '/templates/noGrid.notInGrid.latte'
-		);
+		Assert::exception(function() {
+			$this->latte->renderToString(
+				__DIR__. '/templates/noGrid.notInGrid.latte'
+			);
+		}, CompileException::class, "Thrown exception 'Macro no-grid-data-as must be inside of no-grid macro.' in .../templates/noGrid.notInGrid.latte:4");
 	}
 
 
 	public function testMacros_nested()
 	{
-		$this->setExpectedException('Latte\CompileException', 'Nesting no-grid macros is not allowed.');
-
-		$this->latte->renderToString(
-			__DIR__. '/templates/noGrid.nested.latte'
-		);
+		Assert::exception(function() {
+			$this->latte->renderToString(
+				__DIR__. '/templates/noGrid.nested.latte'
+			);
+		}, CompileException::class, "Thrown exception 'Nesting no-grid macros is not allowed.' in .../templates/noGrid.nested.latte:2");
 	}
 
 }
+
+
+run(new NoGrid_LatteTest);
