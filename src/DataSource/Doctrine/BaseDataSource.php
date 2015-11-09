@@ -2,9 +2,15 @@
 
 namespace Carrooi\NoGrid\DataSource\Doctrine;
 
+use Carrooi\NoGrid\Condition;
+use Carrooi\NoGrid\InvalidArgumentException;
+use Carrooi\NoGrid\NotImplementedException;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Kdyby\Doctrine\NativeQueryBuilder;
+use Kdyby\Doctrine\QueryBuilder;
+use Nette\Utils\Strings;
 
 /**
  *
@@ -22,6 +28,10 @@ abstract class BaseDataSource
 
 	/** @var bool */
 	private $fetchJoinCollections = true;
+
+
+	/** @var int */
+	private static $parametersCount = 0;
 
 
 	/**
@@ -94,16 +104,22 @@ abstract class BaseDataSource
 
 
 	/**
-	 * @param \Doctrine\ORM\Query $query
+	 * @param \Kdyby\Doctrine\QueryBuilder $qb
 	 * @param int $hydrationMode
+	 * @param \Carrooi\NoGrid\Condition[] $conditions
 	 * @param null|int $maxResults
 	 * @param null|int $firstResult
 	 * @param bool $fetchJoinCollections
 	 * @param null|bool $useOutputWalkers
 	 * @return array
 	 */
-	protected static function fetchDataFromQuery(Query $query, $hydrationMode = Query::HYDRATE_OBJECT, $maxResults = null, $firstResult = null, $fetchJoinCollections = true, $useOutputWalkers = null)
+	protected static function fetchDataFromQuery(QueryBuilder $qb, $hydrationMode = Query::HYDRATE_OBJECT, array $conditions, $maxResults = null, $firstResult = null, $fetchJoinCollections = true, $useOutputWalkers = null)
 	{
+		foreach ($conditions as $condition) {
+			self::makeWhere($qb, $condition);
+		}
+
+		$query = $qb->getQuery();
 		$query->setHydrationMode($hydrationMode);
 
 		if ($maxResults !== null || $firstResult !== null) {
@@ -122,6 +138,61 @@ abstract class BaseDataSource
 		}
 
 		return $data;
+	}
+
+
+	/**
+	 * @param \Kdyby\Doctrine\QueryBuilder|\Kdyby\Doctrine\NativeQueryBuilder $qb
+	 * @param \Carrooi\NoGrid\Condition $condition
+	 * @throws \Carrooi\NoGrid\NotImplementedException
+	 */
+	public static function makeWhere($qb, Condition $condition)
+	{
+		if (!$qb instanceof QueryBuilder && !$qb instanceof NativeQueryBuilder) {
+			throw new InvalidArgumentException;
+		}
+
+		$column = $condition->getColumn();
+		$value = $condition->getValue();
+
+		if (!Strings::contains($column, '.')) {
+			$column = current($qb->getRootAliases()). '.'. $column;
+		}
+
+		$parameter = ':grid'. self::$parametersCount;
+
+		$options = $condition->getOptions();
+		$lower = isset($options[Condition::CASE_INSENSITIVE]) && $options[Condition::CASE_INSENSITIVE];
+
+		if ($lower) {
+			$column = 'lower('. $column. ')';
+			$parameter = 'lower('. $parameter. ')';
+		}
+
+		if ($condition->getType() === Condition::SAME) {
+			$qb->andWhere($column. ' = '. $parameter);
+
+		} elseif ($condition->getType() === Condition::NOT_SAME) {
+			$qb->andWhere($column. ' != '. $parameter);
+
+		} elseif ($condition->getType() === Condition::IS_NULL) {
+			$qb->andWhere($column. ' IS NULL');
+
+		} elseif ($condition->getType() === Condition::IS_NOT_NULL) {
+			$qb->andWhere($column. ' IS NOT NULL');
+
+		} elseif ($condition->getType() === Condition::LIKE) {
+			$qb->andWhere($column. ' LIKE '. $parameter);
+
+		} else {
+			throw new NotImplementedException('Filtering condition is not implemented.');
+		}
+
+		if (!in_array($condition->getType(), [Condition::IS_NULL, Condition::IS_NOT_NULL])) {
+			$qb->setParameter('grid'. self::$parametersCount, $value);
+		}
+
+		self::$parametersCount++;
 	}
 
 }

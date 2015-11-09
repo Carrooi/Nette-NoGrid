@@ -28,6 +28,9 @@ class DoctrineNativeQueryFunctionDataSource implements IDataSource
 	/** @var \Kdyby\Doctrine\NativeQueryBuilder */
 	private $query;
 
+	/** @var \Carrooi\NoGrid\Condition[] */
+	private $conditions = [];
+
 
 	/**
 	 * @param \Kdyby\Doctrine\EntityRepository $repository
@@ -108,13 +111,28 @@ class DoctrineNativeQueryFunctionDataSource implements IDataSource
 	 */
 	public function fetchData()
 	{
-		$data = $this->getQuery()->getQuery()->getResult($this->getHydrationMode());
+		$query = $this->getQuery();
+
+		foreach ($this->conditions as $condition) {
+			BaseDataSource::makeWhere($query, $condition);
+		}
+
+		$data = $query->getQuery()->getResult($this->getHydrationMode());
 
 		if ($postFetch = $this->queryDefinition->postFetch($this->repository, $data)) {
 			$data = $postFetch;
 		}
 
 		return $data;
+	}
+
+
+	/**
+	 * @param \Carrooi\NoGrid\Condition[] $conditions
+	 */
+	public function filter(array $conditions)
+	{
+		$this->conditions = $conditions;
 	}
 
 

@@ -3,6 +3,7 @@
 namespace Carrooi\NoGrid\DataSource\Doctrine;
 
 use Carrooi\NoGrid\DataSource\IDataSource;
+use Carrooi\NoGrid\NotImplementedException;
 use Doctrine\ORM\AbstractQuery;
 use Kdyby\Doctrine\QueryObject;
 use Kdyby\Persistence\Queryable;
@@ -92,6 +93,16 @@ class DoctrineQueryObjectDataSource implements IDataSource
 	public function fetchData()
 	{
 		return $this->getResultSet()->toArray();
+	}
+
+
+	/**
+	 * @param \Carrooi\NoGrid\Condition[] $conditions
+	 * @throws \Carrooi\NoGrid\NotImplementedException
+	 */
+	public function filter(array $conditions)
+	{
+		throw new NotImplementedException('Filters are not yet supported for DoctrineQueryObjects.');
 	}
 
 

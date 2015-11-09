@@ -18,6 +18,9 @@ class DoctrineDataSource extends BaseDataSource implements IDataSource
 	/** @var \Kdyby\Doctrine\QueryBuilder */
 	private $qb;
 
+	/** @var \Carrooi\NoGrid\Condition[] */
+	private $conditions = [];
+
 
 	/**
 	 * @param \Kdyby\Doctrine\QueryBuilder $qb
@@ -60,16 +63,24 @@ class DoctrineDataSource extends BaseDataSource implements IDataSource
 	 */
 	public function fetchData()
 	{
-		$query = $this->qb->getQuery();
-
 		return self::fetchDataFromQuery(
-			$query,
+			$this->qb,
 			$this->getHydrationMode(),
+			$this->conditions,
 			$this->qb->getMaxResults(),
 			$this->qb->getFirstResult(),
 			$this->getFetchJoinCollections(),
 			$this->getUseOutputWalkers()
 		);
+	}
+
+
+	/**
+	 * @param \Carrooi\NoGrid\Condition[] $conditions
+	 */
+	public function filter(array $conditions)
+	{
+		$this->conditions = $conditions;
 	}
 
 

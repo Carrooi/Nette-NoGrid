@@ -27,7 +27,6 @@ Be careful, this package was completely rewritten with version 2.0.0. Please rea
 * CSS styles
 * JS scripts
 * Sorting
-* Filtering
 * Forms
 
 It may get some of these features in future.
@@ -204,6 +203,37 @@ protected function createComponentBooksGrid()
 	</table>
 </div>
 ```
+
+## Filtering
+
+**Supported conditions:**
+
+* `Condition::SAME` (default)
+* `Condition::NOT_SAME`
+* `Condition::IS_NULL`
+* `Condition::IS_NOT_NULL`
+* `Condition::LIKE`
+
+```php
+$form = new Form;
+$form->addText('name');
+$form->addSubmit('search', 'Search!');
+
+$grid->setFilteringForm($form);
+
+// setting filters is not required
+$grid->addFilter('name', Condition::LIKE, [
+	Condition::CASE_INSENSITIVE => true,
+], function($name) {
+
+	// update value before sending query to database
+	return '%'. $name. '%';
+});
+```
+
+Now you only have to display form inputs in your template.
+
+**Do not render beginning and end of the array, it is rendered automatically!**
 
 ## Data sources
 
