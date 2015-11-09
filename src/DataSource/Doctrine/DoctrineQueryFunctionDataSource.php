@@ -23,8 +23,11 @@ class DoctrineQueryFunctionDataSource extends BaseDataSource implements IDataSou
 	/** @var \Carrooi\NoGrid\DataSource\Doctrine\AbstractQuery */
 	private $queryDefinition;
 
-	/** @var \Doctrine\ORM\Query */
-	private $query;
+	/** @var \Kdyby\Doctrine\QueryBuilder */
+	private $qb;
+
+	/** @var \Carrooi\NoGrid\Condition[] */
+	private $conditions = [];
 
 
 	/**
@@ -48,26 +51,22 @@ class DoctrineQueryFunctionDataSource extends BaseDataSource implements IDataSou
 
 
 	/**
-	 * @return \Doctrine\ORM\Query
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 * @throws \Carrooi\NoGrid\InvalidArgumentException
 	 */
-	public function getQuery()
+	public function getQueryBuilder()
 	{
-		if (!$this->query) {
-			$query = $this->queryDefinition->getQuery($this->repository);
+		if (!$this->qb) {
+			$qb = $this->queryDefinition->getQuery($this->repository);
 
-			if ($query instanceof QueryBuilder) {
-				$query = $query->getQuery();
+			if (!$qb instanceof QueryBuilder) {
+				throw new InvalidArgumentException('Doctrine\QueryFunctionDataSource::__invoke must return instance of QueryBuilder, '. get_class($qb). ' given.');
 			}
 
-			if (!$query instanceof Query) {
-				throw new InvalidArgumentException('Doctrine\QueryFunctionDataSource::__invoke must return instance of Query or QueryBuilder, '. get_class($query). ' given.');
-			}
-
-			$this->query = $query;
+			$this->qb = $qb;
 		}
 
-		return $this->query;
+		return $this->qb;
 	}
 
 
@@ -78,7 +77,7 @@ class DoctrineQueryFunctionDataSource extends BaseDataSource implements IDataSou
 	public function getCount()
 	{
 		if (($count = $this->queryDefinition->getTotalCount($this->repository)) === null) {
-			$count = (new Paginator($this->getQuery()))->count();
+			$count = (new Paginator($this->getQueryBuilder()->getQuery()))->count();
 		}
 
 		return $count;
@@ -99,13 +98,12 @@ class DoctrineQueryFunctionDataSource extends BaseDataSource implements IDataSou
 	 */
 	public function fetchData()
 	{
-		$qb = $this->getQuery();
-
 		$data = self::fetchDataFromQuery(
-			$qb,
+			$this->getQueryBuilder(),
 			$this->getHydrationMode(),
-			$qb->getMaxResults(),
-			$qb->getFirstResult(),
+			$this->conditions,
+			$this->getQueryBuilder()->getMaxResults(),
+			$this->getQueryBuilder()->getFirstResult(),
 			$this->getFetchJoinCollections(),
 			$this->getUseOutputWalkers()
 		);
@@ -119,12 +117,21 @@ class DoctrineQueryFunctionDataSource extends BaseDataSource implements IDataSou
 
 
 	/**
+	 * @param \Carrooi\NoGrid\Condition[] $conditions
+	 */
+	public function filter(array $conditions)
+	{
+		$this->conditions = $conditions;
+	}
+
+
+	/**
 	 * @param int $offset
 	 * @param int $limit
 	 */
 	public function limit($offset, $limit)
 	{
-		$this->getQuery()
+		$this->getQueryBuilder()
 			->setFirstResult($offset)
 			->setMaxResults($limit);
 	}

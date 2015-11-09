@@ -5,6 +5,7 @@ namespace Carrooi\NoGrid;
 use Carrooi\NoGrid\DataSource\IDataSource;
 use Nette\Application\BadRequestException;
 use Nette\Application\UI\Control;
+use Nette\Application\UI\Form;
 use Nette\Application\UI\Presenter;
 
 /**
@@ -23,6 +24,15 @@ class NoGrid extends Control
 
 	/** @var \Carrooi\NoGrid\View[] */
 	private $views = [];
+
+	/** @var \Nette\Application\UI\Form|null */
+	private $filteringForm;
+
+	/** @var array */
+	private $filteringData;
+
+	/** @var array */
+	private $filteringConditions = [];
 
 	/** @var bool */
 	private $paginatorEnabled = true;
@@ -107,6 +117,83 @@ class NoGrid extends Control
 	public function getViews()
 	{
 		return array_values($this->views);
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function hasFilteringForm()
+	{
+		return $this->filteringForm !== null;
+	}
+
+
+	/**
+	 * @param \Nette\Application\UI\Form $form
+	 * @param string|null $resetButton
+	 * @return $this
+	 */
+	public function setFilteringForm(Form $form, $resetButton = null)
+	{
+		$form->onSuccess[] = function(Form $form, array $values) use ($resetButton) {
+			if ($resetButton && $form[$resetButton]->isSubmittedBy()) {
+				$this->getPresenter()->redirect('this');
+			}
+
+			$this->filteringData = $values;
+		};
+
+		$this->filteringForm = $form;
+
+		return $this;
+	}
+
+
+	/**
+	 * @param string $column
+	 * @param int $type
+	 * @param array $options
+	 * @param callable $value
+	 * @return $this
+	 */
+	public function addFilter($column, $type = Condition::SAME, array $options = [], callable $value = null)
+	{
+		$this->filteringConditions[$column] = [
+			'type' => $type,
+			'options' => $options,
+			'value' => $value,
+		];
+
+		return $this;
+	}
+
+
+	/**
+	 * @param array $data
+	 * @return array
+	 */
+	private function createConditions(array $data)
+	{
+		$conditions = [];
+
+		foreach ($data as $column => $value) {
+			if (isset($this->filteringConditions[$column])) {
+				$type = $this->filteringConditions[$column]['type'];
+				$options = $this->filteringConditions[$column]['options'];
+
+				if ($this->filteringConditions[$column]['value']) {
+					$value = call_user_func($this->filteringConditions[$column]['value'], $value);
+				}
+			} else {
+				$type = Condition::SAME;
+				$options = [];
+			}
+
+			$conditions[] = new Condition($column, $value, $type, $options);
+		}
+
+		return $conditions;
 	}
 
 
@@ -227,6 +314,11 @@ class NoGrid extends Control
 				}
 
 				$this->dataSource->limit($paginator->getOffset(), $paginator->getItemsPerPage());
+
+				if ($this->hasFilteringForm() && !empty($this->filteringData)) {
+					$conditions = $this->createConditions($this->filteringData);
+					$this->dataSource->filter($conditions);
+				}
 			}
 
 			$this->data = $this->dataSource->fetchData();
@@ -262,6 +354,15 @@ class NoGrid extends Control
 	{
 		$this->template->setFile(__DIR__. '/templates/paginatorContainer.latte');
 		$this->template->render();
+	}
+
+
+	/**
+	 * @return \Nette\Application\UI\Form
+	 */
+	protected function createComponentFilteringForm()
+	{
+		return $this->filteringForm;
 	}
 
 

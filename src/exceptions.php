@@ -22,3 +22,10 @@ class MacroDefinitionException extends LogicException {}
  * @author David Kudera <kudera.d@gmail.com>
  */
 class InvalidArgumentException extends LogicException {}
+
+
+/**
+ *
+ * @author David Kudera <kudera.d@gmail.com>
+ */
+class NotImplementedException extends LogicException {}

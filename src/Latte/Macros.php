@@ -24,14 +24,14 @@ class Macros extends MacroSet
 	{
 		$me = new static($compiler);
 
-		$me->addMacro('no-grid', [$me, 'macroNoGrid'], 'unset($_noGrid, $noGrid);');
+		$me->addMacro('no-grid', [$me, 'macroNoGrid'], [$me, 'macroNoGridEnd']);
 		$me->addMacro('no-grid-data-as', '', [$me, 'macroNoGridDataAs']);
 		$me->addMacro('no-grid-views-as', '', [$me, 'macroNoGridViewsAs']);
 		$me->addMacro('no-grid-empty', [$me, 'macroNoGridEmpty'], '}');
 		$me->addMacro('no-grid-not-empty', [$me, 'macroNoGridNotEmpty'], '}');
 		$me->addMacro('no-grid-has-paginator', [$me, 'macroNoGridHasPaginator'], '}');
 
-		$me->addMacro('noGrid', [$me, 'macroNoGrid'], 'unset($_noGrid, $noGrid);');
+		$me->addMacro('noGrid', [$me, 'macroNoGrid'], [$me, 'macroNoGridEnd']);
 		$me->addMacro('noGridDataAs', '', [$me, 'macroNoGridDataAs']);
 		$me->addMacro('noGridViewsAs', '', [$me, 'macroNoGridViewsAs']);
 		$me->addMacro('noGridEmpty', [$me, 'macroNoGridEmpty'], '}');
@@ -53,7 +53,28 @@ class Macros extends MacroSet
 			throw new MacroDefinitionException('Nesting no-grid macros is not allowed.');
 		}
 
-		return $writer->write('$_noGrid = $noGrid = $_control[%node.word];');
+		return $writer->write(
+			'$_noGrid = $noGrid = $_control[%node.word]; '.
+			'if ($_noGrid->hasFilteringForm()) { '.
+				'echo Nette\Bridges\FormsLatte\Runtime::renderFormBegin($form = $_form = $_noGrid["filteringForm"], []); '.
+			'} '
+		);
+	}
+
+
+	/**
+	 * @param \Latte\MacroNode $node
+	 * @param \Latte\PhpWriter $writer
+	 * @return string
+	 */
+	public function macroNoGridEnd(MacroNode $node, PhpWriter $writer)
+	{
+		return $writer->write(
+			'if ($_noGrid->hasFilteringForm()) { '.
+				'echo Nette\Bridges\FormsLatte\Runtime::renderFormEnd($_form); '.
+			'} '.
+			'unset($_noGrid, $noGrid);'
+		);
 	}
 
 

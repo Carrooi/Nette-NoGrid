@@ -68,7 +68,8 @@ class NoGrid_LatteTest extends TestCase
 			->shouldReceive('getCount')->once()->andReturn(3)->getMock()
 			->shouldReceive('getData')->once()->andReturn($data)->getMock()
 			->shouldReceive('isPaginatorEnabled')->once()->andReturn(false)->getMock()
-			->shouldReceive('link')->twice()->andReturn('link')->getMock();
+			->shouldReceive('link')->twice()->andReturn('link')->getMock()
+			->shouldReceive('hasFilteringForm')->twice()->andReturn(false)->getMock();
 
 		$this->grid->view = 'second';
 
@@ -89,7 +90,8 @@ class NoGrid_LatteTest extends TestCase
 	{
 		$this->grid
 			->shouldReceive('getCount')->once()->andReturn(0)->getMock()
-			->shouldReceive('getData')->once()->andReturn([])->getMock();
+			->shouldReceive('getData')->once()->andReturn([])->getMock()
+			->shouldReceive('hasFilteringForm')->twice()->andReturn(false)->getMock();
 
 		Assert::equal(
 			file_get_contents(__DIR__. '/expected/noGrid.empty.html'),

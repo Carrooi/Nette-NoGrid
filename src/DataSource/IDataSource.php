@@ -29,6 +29,12 @@ interface IDataSource
 
 
 	/**
+	 * @param \Carrooi\NoGrid\Condition[] $conditions
+	 */
+	public function filter(array $conditions);
+
+
+	/**
 	 * @param int $offset
 	 * @param int $limit
 	 */
