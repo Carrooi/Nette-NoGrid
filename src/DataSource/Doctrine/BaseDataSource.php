@@ -5,7 +5,6 @@ namespace Carrooi\NoGrid\DataSource\Doctrine;
 use Carrooi\NoGrid\Condition;
 use Carrooi\NoGrid\InvalidArgumentException;
 use Carrooi\NoGrid\NotImplementedException;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Kdyby\Doctrine\NativeQueryBuilder;
@@ -21,7 +20,7 @@ abstract class BaseDataSource
 
 
 	/** @var int */
-	private $hydrationMode = AbstractQuery::HYDRATE_OBJECT;
+	private $hydrationMode = Query::HYDRATE_OBJECT;
 
 	/** @var bool */
 	private $useOutputWalkers;
