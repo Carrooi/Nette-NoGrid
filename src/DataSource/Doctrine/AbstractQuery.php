@@ -12,6 +12,10 @@ abstract class AbstractQuery
 {
 
 
+	/** @var array */
+	private $hints = [];
+
+
 	/**
 	 * Intended to be overridden by descendant.
 	 *
@@ -37,8 +41,29 @@ abstract class AbstractQuery
 
 	/**
 	 * @param \Kdyby\Doctrine\EntityRepository $repository
-	 * @return mixed
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	abstract public function getQuery(EntityRepository $repository);
+
+
+	/**
+	 * @return array
+	 */
+	public function getQueryHints()
+	{
+		return $this->hints;
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 * @return $this
+	 */
+	public function setQueryHint($name, $value)
+	{
+		$this->hints[$name] = $value;
+		return $this;
+	}
 
 }

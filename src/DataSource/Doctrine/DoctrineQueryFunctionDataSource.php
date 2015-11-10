@@ -104,6 +104,7 @@ class DoctrineQueryFunctionDataSource extends BaseDataSource implements IDataSou
 			$this->conditions,
 			$this->getQueryBuilder()->getMaxResults(),
 			$this->getQueryBuilder()->getFirstResult(),
+			$this->queryDefinition->getQueryHints(),
 			$this->getFetchJoinCollections(),
 			$this->getUseOutputWalkers()
 		);

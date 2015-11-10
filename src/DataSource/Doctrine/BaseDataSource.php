@@ -109,11 +109,12 @@ abstract class BaseDataSource
 	 * @param \Carrooi\NoGrid\Condition[] $conditions
 	 * @param null|int $maxResults
 	 * @param null|int $firstResult
+	 * @param array $hints
 	 * @param bool $fetchJoinCollections
 	 * @param null|bool $useOutputWalkers
 	 * @return array
 	 */
-	protected static function fetchDataFromQuery(QueryBuilder $qb, $hydrationMode = Query::HYDRATE_OBJECT, array $conditions, $maxResults = null, $firstResult = null, $fetchJoinCollections = true, $useOutputWalkers = null)
+	protected static function fetchDataFromQuery(QueryBuilder $qb, $hydrationMode = Query::HYDRATE_OBJECT, array $conditions, $maxResults = null, $firstResult = null, array $hints = [], $fetchJoinCollections = true, $useOutputWalkers = null)
 	{
 		foreach ($conditions as $condition) {
 			self::makeWhere($qb, $condition);
@@ -121,6 +122,10 @@ abstract class BaseDataSource
 
 		$query = $qb->getQuery();
 		$query->setHydrationMode($hydrationMode);
+
+		foreach ($hints as $name => $value) {
+			$query->setHint($name, $value);
+		}
 
 		if ($maxResults !== null || $firstResult !== null) {
 			$result = new Paginator($query, $fetchJoinCollections);

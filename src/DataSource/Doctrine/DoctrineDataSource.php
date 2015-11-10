@@ -69,6 +69,7 @@ class DoctrineDataSource extends BaseDataSource implements IDataSource
 			$this->conditions,
 			$this->qb->getMaxResults(),
 			$this->qb->getFirstResult(),
+			[],
 			$this->getFetchJoinCollections(),
 			$this->getUseOutputWalkers()
 		);
