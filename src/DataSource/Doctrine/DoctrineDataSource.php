@@ -45,6 +45,10 @@ class DoctrineDataSource extends BaseDataSource implements IDataSource
 	 */
 	public function getCount()
 	{
+		foreach ($this->conditions as $condition) {
+			BaseDataSource::makeWhere($this->qb, $condition);
+		}
+
 		return (new Paginator($this->qb->getQuery()))->count();
 	}
 

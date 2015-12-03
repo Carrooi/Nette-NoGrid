@@ -138,10 +138,12 @@ class NoGrid extends Control
 	{
 		$form->onSuccess[] = function(Form $form, array $values) use ($resetButton) {
 			if ($resetButton && $form[$resetButton]->isSubmittedBy()) {
-				$this->getPresenter()->redirect('this');
+				$this->redirect('this', array_combine(array_keys($values), array_fill(0, count($values), null)));
 			}
 
 			$this->filteringData = $values;
+
+			$this->redirect('this');
 		};
 
 		$this->filteringForm = $form;
@@ -300,6 +302,11 @@ class NoGrid extends Control
 				$this->views[$this->view]->limitData($data);
 			}
 
+			if ($this->hasFilteringForm() && !empty($this->filteringData)) {
+				$conditions = $this->createConditions($this->filteringData);
+				$this->dataSource->filter($conditions);
+			}
+
 			if ($this->paginatorEnabled) {
 				$this->totalCount = $this->dataSource->getCount();
 
@@ -314,11 +321,6 @@ class NoGrid extends Control
 				}
 
 				$this->dataSource->limit($paginator->getOffset(), $paginator->getItemsPerPage());
-
-				if ($this->hasFilteringForm() && !empty($this->filteringData)) {
-					$conditions = $this->createConditions($this->filteringData);
-					$this->dataSource->filter($conditions);
-				}
 			}
 
 			$this->data = $this->dataSource->fetchData();
@@ -374,6 +376,17 @@ class NoGrid extends Control
 	{
 		parent::loadState($params);
 
+		if ($this->hasFilteringForm()) {
+			foreach ($params as $column => $value) {
+				if (!isset($this->filteringConditions[$column])) {
+					continue;
+				}
+
+				$this->filteringData[$column] = $value;
+				$this['filteringForm-'. $column]->setDefaultValue($value);
+			}
+		}
+
 		if ($this->view !== '') {
 			if (!$this->hasView($this->view)) {
 				throw new BadRequestException;
@@ -382,6 +395,32 @@ class NoGrid extends Control
 			reset($this->views);
 			$this->view = key($this->views);
 		}
+	}
+
+
+	/**
+	 * @param array $params
+	 * @param \Nette\Application\UI\PresenterComponentReflection $reflection
+	 * @throws \Nette\Application\UI\InvalidLinkException
+	 */
+	public function saveState(array &$params, $reflection = null)
+	{
+		if ($this->hasFilteringForm() && !empty($this->filteringData)) {
+			foreach ($this->filteringData as $column => $value) {
+				if (array_key_exists($column, $params)) {
+					continue;
+				}
+
+				if ((string) $this->filteringData[$column] === '') {
+					$params[$column] = null;
+
+				} else {
+					$params[$column] = $value;
+				}
+			}
+		}
+
+		parent::saveState($params, $reflection);
 	}
 
 

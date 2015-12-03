@@ -89,11 +89,22 @@ class DoctrineNativeQueryFunctionDataSource implements IDataSource
 	 */
 	public function getCount()
 	{
-		if (($count = $this->queryDefinition->getTotalCount($this->repository)) === null) {
-			throw new InvalidArgumentException('Doctrine\NativeQueryFunctionDataSource: Please implement method getTotalCount().');
+		// deprecated
+		if (($count = $this->queryDefinition->getTotalCount($this->repository)) !== null) {
+			return $count;
 		}
 
-		return $count;
+		if (($qb = $this->queryDefinition->getTotalCountQuery($this->repository)) === null) {
+			throw new InvalidArgumentException('Doctrine\NativeQueryFunctionDataSource: Please implement method getTotalCountQuery().');
+		}
+
+		foreach ($this->conditions as $condition) {
+			BaseDataSource::makeWhere($qb, $condition);
+		}
+
+		return (int) $qb
+			->getQuery()
+			->getSingleScalarResult();
 	}
 
 

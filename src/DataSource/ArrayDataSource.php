@@ -35,7 +35,8 @@ class ArrayDataSource implements IDataSource
 	 */
 	public function getCount()
 	{
-		return count($this->dataDefinition);
+		$this->fetchData();
+		return count($this->data);
 	}
 
 
@@ -67,7 +68,7 @@ class ArrayDataSource implements IDataSource
 	public function filter(array $conditions)
 	{
 		foreach ($conditions as $condition) {
-			$this->data = array_filter($this->data, function($row) use ($condition) {
+			$this->data = array_filter($this->fetchData(), function($row) use ($condition) {
 				if (!isset($row[$condition->getColumn()])) {
 					return false;
 				}
