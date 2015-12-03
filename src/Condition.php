@@ -19,6 +19,7 @@ class Condition
 	const IS_NULL = 3;
 	const IS_NOT_NULL = 4;
 	const LIKE = 5;
+	const CALLBACK = 6;
 
 
 	/** @var string */
@@ -46,6 +47,10 @@ class Condition
 		$this->value = $value;
 		$this->type = $type;
 		$this->options = $options;
+
+		if($type === self::CALLBACK && ( ! array_key_exists(self::CALLBACK, $options) || ! is_callable($options[self::CALLBACK]))){
+			throw new InvalidStateException('CALLBACK option must be defined and callable for condition of CALLBACK type.');
+		}
 	}
 
 

@@ -188,11 +188,14 @@ abstract class BaseDataSource
 		} elseif ($condition->getType() === Condition::LIKE) {
 			$qb->andWhere($column. ' LIKE '. $parameter);
 
+		} elseif ($condition->getType() === Condition::CALLBACK) {
+			call_user_func($options[Condition::CALLBACK], $qb, $value);
+
 		} else {
 			throw new NotImplementedException('Filtering condition is not implemented.');
 		}
 
-		if (!in_array($condition->getType(), [Condition::IS_NULL, Condition::IS_NOT_NULL])) {
+		if (!in_array($condition->getType(), [Condition::IS_NULL, Condition::IS_NOT_NULL, Condition::CALLBACK])) {
 			$qb->setParameter('grid'. self::$parametersCount, $value);
 		}
 
