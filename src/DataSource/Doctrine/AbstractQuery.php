@@ -19,10 +19,22 @@ abstract class AbstractQuery
 	/**
 	 * Intended to be overridden by descendant.
 	 *
+	 * @deprecated use ::getTotalCountQuery()
 	 * @param \Kdyby\Doctrine\EntityRepository $repository
 	 * @return int
 	 */
 	public function getTotalCount(EntityRepository $repository)
+	{
+	}
+
+
+	/**
+	 * Intended to be overridden by descendant.
+	 *
+	 * @param \Kdyby\Doctrine\EntityRepository $repository
+	 * @return \Kdyby\Doctrine\QueryBuilder
+	 */
+	public function getTotalCountQuery(EntityRepository $repository)
 	{
 	}
 

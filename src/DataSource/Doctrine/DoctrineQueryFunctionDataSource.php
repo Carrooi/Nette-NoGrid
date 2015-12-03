@@ -76,11 +76,26 @@ class DoctrineQueryFunctionDataSource extends BaseDataSource implements IDataSou
 	 */
 	public function getCount()
 	{
-		if (($count = $this->queryDefinition->getTotalCount($this->repository)) === null) {
-			$count = (new Paginator($this->getQueryBuilder()->getQuery()))->count();
+		// deprecated
+		if (($count = $this->queryDefinition->getTotalCount($this->repository)) !== null) {
+			return $count;
 		}
 
-		return $count;
+		$custom = false;
+
+		if ($qb = $this->queryDefinition->getTotalCountQuery($this->repository)) {
+			$custom = true;
+		} else {
+			$qb = $this->getQueryBuilder();
+		}
+
+		foreach ($this->conditions as $condition) {
+			BaseDataSource::makeWhere($qb, $condition);
+		}
+
+		return $custom ?
+			(int) $qb->getQuery()->getSingleScalarResult() :
+			(new Paginator($this->getQueryBuilder()->getQuery()))->count();
 	}
 
 

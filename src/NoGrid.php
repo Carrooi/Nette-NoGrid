@@ -302,6 +302,11 @@ class NoGrid extends Control
 				$this->views[$this->view]->limitData($data);
 			}
 
+			if ($this->hasFilteringForm() && !empty($this->filteringData)) {
+				$conditions = $this->createConditions($this->filteringData);
+				$this->dataSource->filter($conditions);
+			}
+
 			if ($this->paginatorEnabled) {
 				$this->totalCount = $this->dataSource->getCount();
 
@@ -316,11 +321,6 @@ class NoGrid extends Control
 				}
 
 				$this->dataSource->limit($paginator->getOffset(), $paginator->getItemsPerPage());
-
-				if ($this->hasFilteringForm() && !empty($this->filteringData)) {
-					$conditions = $this->createConditions($this->filteringData);
-					$this->dataSource->filter($conditions);
-				}
 			}
 
 			$this->data = $this->dataSource->fetchData();
