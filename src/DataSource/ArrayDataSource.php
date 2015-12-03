@@ -69,10 +69,10 @@ class ArrayDataSource implements IDataSource
 	public function filter(array $conditions)
 	{
 		foreach ($conditions as $condition) {
-			if($condition->getType() === Condition::CALLBACK){
+			if($condition->getType() === Condition::CALLBACK) {
 				$result = call_user_func($condition->getOptions()[Condition::CALLBACK], $this->fetchData(), $condition->getValue());
 
-				if($result === null){
+				if($result === null) {
 					throw new InvalidStateException('Filter callback must return filtered array for ArrayDataSource, null given.');
 				}
 

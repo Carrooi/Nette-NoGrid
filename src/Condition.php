@@ -48,7 +48,7 @@ class Condition
 		$this->type = $type;
 		$this->options = $options;
 
-		if($type === self::CALLBACK && ( ! array_key_exists(self::CALLBACK, $options) || ! is_callable($options[self::CALLBACK]))){
+		if($type === self::CALLBACK && (!array_key_exists(self::CALLBACK, $options) || !is_callable($options[self::CALLBACK]))) {
 			throw new InvalidStateException('CALLBACK option must be defined and callable for condition of CALLBACK type.');
 		}
 	}

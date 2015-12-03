@@ -195,8 +195,8 @@ class NoGrid extends Control
 	 */
 	public function addFilter($column, $type = Condition::SAME, array $options = [], callable $value = null)
 	{
-		if ($type === Condition::CALLBACK){
-			if(!is_callable($value)){
+		if ($type === Condition::CALLBACK) {
+			if(!is_callable($value)) {
 				throw new InvalidArgumentException('Valid callback ($value parameter) is needed for CALLBACK Condition type.');
 			}
 

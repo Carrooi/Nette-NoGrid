@@ -240,33 +240,33 @@ You have to render filter inputs yourself. Your template may then look like this
 **Please note that you do not have to render form tags as NoGrid will do it for you.**
 
 ```smarty
-<table n:no-grid="personsGrid" class="table table-striped">
+<table n:no-grid="peopleGrid" class="table table-striped">
 	<thead>
-	<tr>
-		<th>
-			Name
-			<br>
-			<input n:name="name">
-			<input n:name="search">
-		</th>
-	</tr>
+		<tr>
+			<th>
+				Name
+				<br>
+				<input n:name="name">
+				<input n:name="search">
+			</th>
+		</tr>
 	</thead>
 
 	<tbody>
-	<tr n:no-grid-data-as="$line">
-		<td>{$line['name'].' '.$line['surname']}</td>
-	</tr>
+		<tr n:no-grid-data-as="$line">
+			<td>{$line['name'].' '.$line['surname']}</td>
+		</tr>
 	</tbody>
 </table>
 ```
 
-If you need alter begginning `<form>` tag, you can access it using `$form->getElementPrototype()`.
+If you need to modify begginning `<form>` tag, you can access it using `$form->getElementPrototype()` while defining.
 
 ### Callback Condition
 
 If you need more complex condition than `SAME`, `NOT_SAME`, `IS/NOT_NULL`, ..., you can specify your own callback in Condition::CALLBACK type.
 
-Example for `ArrayDataSource`:
+#### Example for `ArrayDataSource`:
 
 ```php
 $dataSource = new ArrayDataSource([
@@ -297,12 +297,14 @@ return $grid;
 ```
 
 **You HAVE TO return filtered array when using Callback condition on `ArrayDataSource`.** 
+
 You will get InvalidStateException if you forget to.
 
 
-Example for `DoctrineDataSource`:
 
-```
+#### Example for `DoctrineDataSource`:
+
+```php
 $queryBuilder = $this->entityManager->getRepository(\Libs\Entity\Person::class)->createQueryBuilder('p');
 
 $dataSource = new DoctrineDataSource($queryBuilder);
@@ -315,8 +317,7 @@ $form->addSubmit('search', 'Search');
 $grid->setFilteringForm($form);
 
 $grid->addFilter('person', Condition::CALLBACK, [], function (QueryBuilder $queryBuilder, $value) {
-	$queryBuilder->andWhere("CONCAT(p.givenName,' ',p.familyName) LIKE :fullname")
-		 		 ->setParameter('fullname', "%{$value}%");
+	$queryBuilder->andWhere("CONCAT(p.givenName,' ',p.familyName) LIKE :fullname")->setParameter('fullname', "%{$value}%");
 });
 
 ```
