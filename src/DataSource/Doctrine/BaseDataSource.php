@@ -149,6 +149,7 @@ abstract class BaseDataSource
 	 * @param \Kdyby\Doctrine\QueryBuilder|\Kdyby\Doctrine\NativeQueryBuilder $qb
 	 * @param \Carrooi\NoGrid\Condition $condition
 	 * @throws \Carrooi\NoGrid\NotImplementedException
+	 * @throws \Carrooi\NoGrid\InvalidArgumentException
 	 */
 	public static function makeWhere($qb, Condition $condition)
 	{

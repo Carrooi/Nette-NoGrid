@@ -3,6 +3,7 @@
 namespace Carrooi\NoGrid\DataSource;
 
 use Carrooi\NoGrid\Condition;
+use Carrooi\NoGrid\InvalidStateException;
 use Carrooi\NoGrid\NotImplementedException;
 use Nette\Utils\Strings;
 
@@ -68,13 +69,24 @@ class ArrayDataSource implements IDataSource
 	public function filter(array $conditions)
 	{
 		foreach ($conditions as $condition) {
-			$this->data = array_filter($this->fetchData(), function($row) use ($condition) {
-				if (!isset($row[$condition->getColumn()])) {
-					return false;
+			if($condition->getType() === Condition::CALLBACK){
+				$result = call_user_func($condition->getOptions()[Condition::CALLBACK], $this->fetchData(), $condition->getValue());
+
+				if($result === null){
+					throw new InvalidStateException('Filter callback must return filtered array for ArrayDataSource, null given.');
 				}
 
-				return $this->compare($condition->getType(), $row[$condition->getColumn()], $condition->getValue(), $condition->getOptions());
-			});
+				$this->data = $result;
+
+			} else {
+				$this->data = array_filter($this->fetchData(), function($row) use ($condition) {
+					if (!isset($row[$condition->getColumn()])) {
+						return false;
+					}
+
+					return $this->compare($condition->getType(), $row[$condition->getColumn()], $condition->getValue(), $condition->getOptions());
+				});
+			}
 		}
 	}
 

@@ -152,15 +152,58 @@ class NoGrid extends Control
 	}
 
 
+
 	/**
+	 * Example usage:
+	 *
+	 * <pre>
+	 * // applies as WHERE name = $value without any transformation
+	 * $grid->addFilter('name',
+	 *                    Condition::SAME
+	 * );
+	 *
+	 *
+	 * // applies as WHERE lower(name) = lower($value)
+	 * $grid->addFilter('name',
+	 *                    Condition::SAME,
+	 *                    [Condition::CASE_INSENSITIVE => TRUE]
+	 * );
+	 *
+	 *
+	 * // applies as WHERE lower(name) LIKE lower(%$value%)
+	 * $grid->addFilter('name',
+	 *                    Condition::LIKE,
+	 *                    [Condition::CASE_INSENSITIVE => TRUE],
+	 *                    function($value){ return "%{$value}%"; } // note that you have to define % yourself for LIKE condition
+	 * );
+	 *
+	 *
+	 * // provides queryBuilder or array as first parameter to callback
+	 * $grid->addFilter('name',
+	 *                    Condition::CALLBACK,
+	 *                    [],
+	 *                    function($data, $value){ $data->andWhere('custom condition'); }
+	 * );
+	 * </pre>
+	 *
 	 * @param string $column
 	 * @param int $type
 	 * @param array $options
-	 * @param callable $value
+	 * @param callable|null $value Either value preprocessor callback OR filtering callback for CALLBACK type
 	 * @return $this
+	 * @throws InvalidArgumentException
 	 */
 	public function addFilter($column, $type = Condition::SAME, array $options = [], callable $value = null)
 	{
+		if ($type === Condition::CALLBACK){
+			if(!is_callable($value)){
+				throw new InvalidArgumentException('Valid callback ($value parameter) is needed for CALLBACK Condition type.');
+			}
+
+			$options[Condition::CALLBACK] = $value;
+			$value = null;
+		}
+
 		$this->filteringConditions[$column] = [
 			'type' => $type,
 			'options' => $options,
@@ -184,7 +227,7 @@ class NoGrid extends Control
 				$type = $this->filteringConditions[$column]['type'];
 				$options = $this->filteringConditions[$column]['options'];
 
-				if ($this->filteringConditions[$column]['value']) {
+				if ($type !== Condition::CALLBACK && $this->filteringConditions[$column]['value']) {
 					$value = call_user_func($this->filteringConditions[$column]['value'], $value);
 				}
 			} else {

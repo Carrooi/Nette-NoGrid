@@ -213,6 +213,7 @@ protected function createComponentBooksGrid()
 * `Condition::IS_NULL`
 * `Condition::IS_NOT_NULL`
 * `Condition::LIKE`
+* `Condition::CALLBACK`
 
 ```php
 $form = new Form;
@@ -221,7 +222,8 @@ $form->addSubmit('search', 'Search!');
 
 $grid->setFilteringForm($form);
 
-// setting filters is not required
+// NoGrid will automatically create Condition::SAME for matching fileds and values provided from form.
+// You can override this funcionality this way:
 $grid->addFilter('name', Condition::LIKE, [
 	Condition::CASE_INSENSITIVE => true,
 ], function($name) {
@@ -231,9 +233,96 @@ $grid->addFilter('name', Condition::LIKE, [
 });
 ```
 
-Now you only have to display form inputs in your template.
+### Rendering filter inputs
 
-**Do not render beginning and end of the array, it is rendered automatically!**
+You have to render filter inputs yourself. Your template may then look like this:
+
+**Please note that you do not have to render form tags as NoGrid will do it for you.**
+
+```smarty
+<table n:no-grid="personsGrid" class="table table-striped">
+	<thead>
+	<tr>
+		<th>
+			Name
+			<br>
+			<input n:name="name">
+			<input n:name="search">
+		</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	<tr n:no-grid-data-as="$line">
+		<td>{$line['name'].' '.$line['surname']}</td>
+	</tr>
+	</tbody>
+</table>
+```
+
+If you need alter begginning `<form>` tag, you can access it using `$form->getElementPrototype()`.
+
+### Callback Condition
+
+If you need more complex condition than `SAME`, `NOT_SAME`, `IS/NOT_NULL`, ..., you can specify your own callback in Condition::CALLBACK type.
+
+Example for `ArrayDataSource`:
+
+```php
+$dataSource = new ArrayDataSource([
+	['name' => 'awesome', 'surname' => 'hypercat'],
+	['name' => 'john', 'surname' => 'doe'],
+	['name' => 'lorem', 'surname' => 'ipsum'],
+]);
+
+$grid = $noGridFactory->create($dataSource);
+
+// prepare filter form
+$form = new \Nette\Application\UI\Form;
+
+$form->addText('fullname');
+$form->addSubmit('search', 'Search');
+
+$grid->setFilteringForm($form);
+
+// define custom filter
+// you will get whole array as first parameter and value from form input as second parameter
+$grid->addFilter('fullname', Condition::CALLBACK, [], function (array $data, $value) { 
+	return array_filter($data, function($row) use($value) {
+		return (\Nette\Utils\Strings::contains($row['name'] . ' ' . $row['surname'], $value));
+	});
+});
+
+return $grid;
+```
+
+**You HAVE TO return filtered array when using Callback condition on `ArrayDataSource`.** 
+You will get InvalidStateException if you forget to.
+
+
+Example for `DoctrineDataSource`:
+
+```
+$queryBuilder = $this->entityManager->getRepository(\Libs\Entity\Person::class)->createQueryBuilder('p');
+
+$dataSource = new DoctrineDataSource($queryBuilder);
+
+$form = new \Nette\Application\UI\Form;
+
+$form->addText('fullname');
+$form->addSubmit('search', 'Search');
+
+$grid->setFilteringForm($form);
+
+$grid->addFilter('person', Condition::CALLBACK, [], function (QueryBuilder $queryBuilder, $value) {
+	$queryBuilder->andWhere("CONCAT(p.givenName,' ',p.familyName) LIKE :fullname")
+		 		 ->setParameter('fullname', "%{$value}%");
+});
+
+```
+
+**When using Doctrine data source, you do not have to return anything from callback.**
+
 
 ## Data sources
 
