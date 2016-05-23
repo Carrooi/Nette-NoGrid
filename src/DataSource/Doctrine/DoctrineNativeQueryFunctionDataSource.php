@@ -31,6 +31,12 @@ class DoctrineNativeQueryFunctionDataSource implements IDataSource
 	/** @var \Carrooi\NoGrid\Condition[] */
 	private $conditions = [];
 
+	/** @var int */
+	private $firstResult;
+
+	/** @var int */
+	private $maxResults;
+
 
 	/**
 	 * @param \Kdyby\Doctrine\EntityRepository $repository
@@ -128,7 +134,17 @@ class DoctrineNativeQueryFunctionDataSource implements IDataSource
 			BaseDataSource::makeWhere($query, $condition);
 		}
 
-		$data = $query->getQuery()->getResult($this->getHydrationMode());
+		$q = $query->getQuery();
+
+		if ($this->firstResult !== null) {
+			$q->setFirstResult($this->firstResult);
+		}
+
+		if ($this->maxResults !== null) {
+			$q->setMaxResults($this->maxResults);
+		}
+
+		$data = $q->getResult($this->getHydrationMode());
 
 		if ($postFetch = $this->queryDefinition->postFetch($this->repository, $data)) {
 			$data = $postFetch;
@@ -153,9 +169,8 @@ class DoctrineNativeQueryFunctionDataSource implements IDataSource
 	 */
 	public function limit($offset, $limit)
 	{
-		$this->getQuery()
-			->setFirstResult($offset)
-			->setMaxResults($limit);
+		$this->firstResult = $offset;
+		$this->maxResults = $limit;
 	}
 
 }
