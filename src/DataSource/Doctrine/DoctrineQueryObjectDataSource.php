@@ -4,7 +4,7 @@ namespace Carrooi\NoGrid\DataSource\Doctrine;
 
 use Carrooi\NoGrid\DataSource\IDataSource;
 use Carrooi\NoGrid\NotImplementedException;
-use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\AbstractQuery as DoctrineAbstractQuery;
 use Kdyby\Doctrine\QueryObject;
 use Kdyby\Persistence\Queryable;
 
@@ -26,7 +26,7 @@ class DoctrineQueryObjectDataSource implements IDataSource
 	private $resultSet;
 
 	/** @var int */
-	private $hydrationMode = AbstractQuery::HYDRATE_OBJECT;
+	private $hydrationMode = DoctrineAbstractQuery::HYDRATE_OBJECT;
 
 
 	/**
