@@ -2,6 +2,7 @@
 
 namespace Carrooi\NoGrid\DataSource\Doctrine;
 
+use Carrooi\NoGrid\NoGrid;
 use Kdyby\Doctrine\EntityRepository;
 
 /**
@@ -19,9 +20,20 @@ abstract class AbstractQuery
 	/**
 	 * Intended to be overridden by descendant.
 	 *
+	 * @param \Carrooi\NoGrid\NoGrid $grid
+	 * @param \Carrooi\NoGrid\DataSource\Doctrine\DoctrineQueryFunctionDataSource $source
+	 */
+	public function configure(NoGrid $grid, DoctrineQueryFunctionDataSource $source)
+	{
+	}
+
+
+	/**
+	 * Intended to be overridden by descendant.
+	 *
 	 * @deprecated use ::getTotalCountQuery()
 	 * @param \Kdyby\Doctrine\EntityRepository $repository
-	 * @return int
+	 * @return int|void
 	 */
 	public function getTotalCount(EntityRepository $repository)
 	{
@@ -32,7 +44,7 @@ abstract class AbstractQuery
 	 * Intended to be overridden by descendant.
 	 *
 	 * @param \Kdyby\Doctrine\EntityRepository $repository
-	 * @return \Kdyby\Doctrine\QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder|void
 	 */
 	public function getTotalCountQuery(EntityRepository $repository)
 	{
@@ -44,7 +56,7 @@ abstract class AbstractQuery
 	 *
 	 * @param \Kdyby\Doctrine\EntityRepository $repository
 	 * @param array $data
-	 * @return array
+	 * @return array|void
 	 */
 	public function postFetch(EntityRepository $repository, $data)
 	{

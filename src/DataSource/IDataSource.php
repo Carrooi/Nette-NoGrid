@@ -2,12 +2,20 @@
 
 namespace Carrooi\NoGrid\DataSource;
 
+use Carrooi\NoGrid\NoGrid;
+
 /**
  *
  * @author David Kudera <kudera.d@gmail.com>
  */
 interface IDataSource
 {
+
+
+	/**
+	 * @param \Carrooi\NoGrid\NoGrid $grid
+	 */
+	public function configure(NoGrid $grid);
 
 
 	/**

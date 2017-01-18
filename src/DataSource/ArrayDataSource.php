@@ -3,6 +3,7 @@
 namespace Carrooi\NoGrid\DataSource;
 
 use Carrooi\NoGrid\Condition;
+use Carrooi\NoGrid\NoGrid;
 use Carrooi\NoGrid\NotImplementedException;
 use Nette\Utils\Strings;
 
@@ -27,6 +28,14 @@ class ArrayDataSource implements IDataSource
 	public function __construct(array $data)
 	{
 		$this->dataDefinition = $data;
+	}
+
+
+	/**
+	 * @param \Carrooi\NoGrid\NoGrid $grid
+	 */
+	public function configure(NoGrid $grid)
+	{
 	}
 
 

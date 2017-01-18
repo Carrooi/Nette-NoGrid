@@ -102,6 +102,7 @@ class NoGridTest extends TestCase
 		$data = [1, 2, 3, 4, 5];
 
 		$this->source
+			->shouldReceive('configure')->once()->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
 
 		$this->grid->disablePaginator();
@@ -115,6 +116,7 @@ class NoGridTest extends TestCase
 		$data = [1, 2, 3, 4, 5];
 
 		$this->source
+			->shouldReceive('configure')->once()->getMock()
 			->shouldReceive('getCount')->once()->andReturn(5)->getMock()
 			->shouldReceive('limit')->once()->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
@@ -128,6 +130,7 @@ class NoGridTest extends TestCase
 		$data = [1, 2, 3, 4, 5];
 
 		$this->source
+			->shouldReceive('configure')->once()->getMock()
 			->shouldReceive('getCount')->once()->andReturn(5)->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
 
@@ -142,6 +145,7 @@ class NoGridTest extends TestCase
 		$data = [1, 2, 3, 4, 5];
 
 		$this->source
+			->shouldReceive('configure')->once()->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
 
 		$this->grid->disablePaginator();
@@ -162,6 +166,7 @@ class NoGridTest extends TestCase
 		$data = [1, 2, 3, 4, 5];
 
 		$this->source
+			->shouldReceive('configure')->once()->getMock()
 			->shouldReceive('getCount')->once()->andReturn(2)->getMock()
 			->shouldReceive('limit')->once()->with(0, $itemsPerPage)->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
@@ -175,6 +180,7 @@ class NoGridTest extends TestCase
 		$data = [1, 2, 3, 4, 5];
 
 		$this->source
+			->shouldReceive('configure')->once()->getMock()
 			->shouldReceive('getData')->once()->andReturn($data)->getMock()
 			->shouldReceive('fetchData')->once()->andReturn($data)->getMock();
 

@@ -3,6 +3,7 @@
 namespace Carrooi\NoGrid\DataSource\Doctrine;
 
 use Carrooi\NoGrid\DataSource\IDataSource;
+use Carrooi\NoGrid\NoGrid;
 use Carrooi\NoGrid\NotImplementedException;
 use Doctrine\ORM\AbstractQuery as DoctrineAbstractQuery;
 use Kdyby\Doctrine\QueryObject;
@@ -37,6 +38,14 @@ class DoctrineQueryObjectDataSource implements IDataSource
 	{
 		$this->repository = $repository;
 		$this->query = $query;
+	}
+
+
+	/**
+	 * @param \Carrooi\NoGrid\NoGrid $grid
+	 */
+	public function configure(NoGrid $grid)
+	{
 	}
 
 

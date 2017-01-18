@@ -4,7 +4,7 @@ namespace Carrooi\NoGrid\DataSource\Doctrine;
 
 use Carrooi\NoGrid\DataSource\IDataSource;
 use Carrooi\NoGrid\InvalidArgumentException;
-use Doctrine\ORM\Query;
+use Carrooi\NoGrid\NoGrid;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Kdyby\Doctrine\EntityRepository;
 use Kdyby\Doctrine\QueryBuilder;
@@ -38,6 +38,15 @@ class DoctrineQueryFunctionDataSource extends BaseDataSource implements IDataSou
 	{
 		$this->repository = $repository;
 		$this->queryDefinition = $queryDefinition;
+	}
+
+
+	/**
+	 * @param \Carrooi\NoGrid\NoGrid $grid
+	 */
+	public function configure(NoGrid $grid)
+	{
+		$this->queryDefinition->configure($grid, $this);
 	}
 
 

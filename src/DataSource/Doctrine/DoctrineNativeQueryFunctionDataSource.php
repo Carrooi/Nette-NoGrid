@@ -4,6 +4,7 @@ namespace Carrooi\NoGrid\DataSource\Doctrine;
 
 use Carrooi\NoGrid\DataSource\IDataSource;
 use Carrooi\NoGrid\InvalidArgumentException;
+use Carrooi\NoGrid\NoGrid;
 use Doctrine\ORM\Query;
 use Kdyby\Doctrine\EntityRepository;
 use Kdyby\Doctrine\NativeQueryBuilder;
@@ -55,6 +56,14 @@ class DoctrineNativeQueryFunctionDataSource implements IDataSource
 	public function getHydrationMode()
 	{
 		return $this->hydrationMode;
+	}
+
+
+	/**
+	 * @param \Carrooi\NoGrid\NoGrid $grid
+	 */
+	public function configure(NoGrid $grid)
+	{
 	}
 
 

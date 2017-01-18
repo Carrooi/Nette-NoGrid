@@ -3,6 +3,7 @@
 namespace Carrooi\NoGrid\DataSource\Doctrine;
 
 use Carrooi\NoGrid\DataSource\IDataSource;
+use Carrooi\NoGrid\NoGrid;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Kdyby\Doctrine\QueryBuilder;
 
@@ -28,6 +29,14 @@ class DoctrineDataSource extends BaseDataSource implements IDataSource
 	public function __construct(QueryBuilder $qb)
 	{
 		$this->qb = $qb;
+	}
+
+
+	/**
+	 * @param \Carrooi\NoGrid\NoGrid $grid
+	 */
+	public function configure(NoGrid $grid)
+	{
 	}
 
 
