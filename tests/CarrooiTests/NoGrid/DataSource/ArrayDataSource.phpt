@@ -65,4 +65,4 @@ class ArrayDataSourceTest extends TestCase
 }
 
 
-run(new ArrayDataSourceTest);
+(new ArrayDataSourceTest)->run();

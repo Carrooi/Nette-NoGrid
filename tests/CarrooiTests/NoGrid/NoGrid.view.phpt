@@ -95,4 +95,4 @@ class NoGrid_ViewTest extends TestCase
 }
 
 
-run(new NoGrid_ViewTest);
+(new NoGrid_ViewTest)->run();

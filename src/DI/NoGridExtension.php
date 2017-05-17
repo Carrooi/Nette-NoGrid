@@ -21,22 +21,19 @@ class NoGridExtension extends DI\CompilerExtension
 		],
 	];
 
+	/** @var string */
+	private $paginatorTemplateProviderClass;
+
 
 	public function loadConfiguration()
 	{
 		$config = $this->validateConfig($this->defaults);
 		$builder = $this->getContainerBuilder();
 
-		$paginatorTemplateProvider = $builder->getByType($config['paginator']['templateProvider']);
-		if (!$paginatorTemplateProvider) {
-			$paginatorTemplateProvider = $this->prefix('paginatorTemplateProvider');
-			$builder->addDefinition($paginatorTemplateProvider)
-				->setClass($config['paginator']['templateProvider']);
-		}
+		$this->paginatorTemplateProviderClass = $config['paginator']['templateProvider'];
 
 		$grid = $builder->addDefinition($this->prefix('grid'))
 			->setClass('Carrooi\NoGrid\NoGrid')
-			->setArguments(['...', '@'. $paginatorTemplateProvider])
 			->setImplement('Carrooi\NoGrid\INoGridFactory')
 			->addSetup('setItemsPerPage', [$config['itemsPerPage']]);
 
@@ -49,6 +46,17 @@ class NoGridExtension extends DI\CompilerExtension
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
+
+		$grid = $builder->getDefinition($this->prefix('grid'));
+
+		$paginatorTemplateProvider = $builder->getByType($this->paginatorTemplateProviderClass);
+		if (!$paginatorTemplateProvider) {
+			$paginatorTemplateProvider = $this->prefix('paginatorTemplateProvider');
+			$builder->addDefinition($paginatorTemplateProvider)
+				->setClass($this->paginatorTemplateProviderClass);
+		}
+
+		$grid->setArguments(['...', '@'. $paginatorTemplateProvider]);
 
 		$registerToLatte = function (DI\ServiceDefinition $def) {
 			$def->addSetup('?->onCompile[] = function($engine) { Carrooi\NoGrid\Latte\Macros::install($engine->getCompiler()); }', array('@self'));
