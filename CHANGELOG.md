@@ -1,6 +1,10 @@
 # Change log
 
-## [Unreleased](https://github.com/Carrooi/Nette-NoGrid/compare/1.1.0...master)
+## [2.0.0](https://github.com/Carrooi/Nette-NoGrid/compare/1.1.0...master)
+* Update to nette 2.4
+* Many fixes and refactoring
+* Add support for filters
+* Add more options to doctrine data sources
 * Add support for DoctrineQueryFunction [#18](https://github.com/Carrooi/Nette-NoGrid/issues/18)
 
 ## [1.1.0](https://github.com/Carrooi/Nette-NoGrid/compare/1.0.0...1.1.0)

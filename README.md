@@ -20,6 +20,7 @@ Be careful, this package was completely rewritten with version 2.0.0. Please rea
 * Latte macros for simplified templates
 * Views (eg. for archived and not archived data)
 * Different data sources
+* Filtering
 
 **It hasn't:**
 
@@ -41,17 +42,17 @@ Now you can register Nette's extension
 
 ```yaml
 extensions:
-	grid: Carrooi\NoGrid\DI\NoGridExtension
+    grid: Carrooi\NoGrid\DI\NoGridExtension
 ```
 
 ## Configuration
 
 ```yaml
 grid:
-	itemsPerPage: 20
-	paginator:
-		template: %appDir%/paginator.latte
-		templateProvider: App\Grid\TemplateProvider
+    itemsPerPage: 20
+    paginator:
+        template: %appDir%/paginator.latte
+        templateProvider: App\Grid\TemplateProvider
 ```
 
 * `itemsPerPage`: default is 10
