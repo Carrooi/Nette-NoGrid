@@ -1,5 +1,8 @@
 # Change log
 
+## [2.0.2](https://github.com/Carrooi/Nette-NoGrid/compare/2.0.1...2.0.2)
+* Fix typo
+
 ## [2.0.1](https://github.com/Carrooi/Nette-NoGrid/compare/2.0.0...2.0.1)
 * Fix nette DI extension
 
