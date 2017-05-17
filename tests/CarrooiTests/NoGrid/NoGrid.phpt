@@ -199,4 +199,4 @@ class NoGridTest extends TestCase
 }
 
 
-run(new NoGridTest);
+(new NoGridTest)->run();

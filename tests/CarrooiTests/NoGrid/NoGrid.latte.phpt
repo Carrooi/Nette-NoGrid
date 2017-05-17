@@ -109,7 +109,7 @@ class NoGrid_LatteTest extends TestCase
 			$this->latte->renderToString(
 				__DIR__. '/templates/noGrid.notInGrid.latte'
 			);
-		}, CompileException::class, "Thrown exception 'Macro no-grid-data-as must be inside of no-grid macro.' in .../templates/noGrid.notInGrid.latte:4");
+		}, CompileException::class, "Thrown exception 'Macro no-grid-data-as must be inside of no-grid macro.' in .../templates/noGrid.notInGrid.latte:3");
 	}
 
 
@@ -125,4 +125,4 @@ class NoGrid_LatteTest extends TestCase
 }
 
 
-run(new NoGrid_LatteTest);
+(new NoGrid_LatteTest)->run();

@@ -16,16 +16,17 @@
 		"issues": "https://github.com/Carrooi/Nette-NoGrid/issues"
 	},
 	"require": {
-		"php": ">=5.5.0",
-		"nette/di": "~2.2",
-		"nette/application": "~2.2",
-		"nette/forms": "~2.2",
-		"latte/latte": "~2.2",
-		"kdyby/doctrine": ">=2.3"
+		"php": ">=5.6",
+
+		"nette/di": "^2.4",
+		"nette/application": "^2.4",
+		"nette/forms": "^2.4",
+		"latte/latte": "^2.4",
+		"kdyby/doctrine": "*"
 	},
 	"require-dev": {
-		"nette/tester": "~1.6",
-		"mockery/mockery": "~0.9"
+		"nette/tester": "^1.7",
+		"mockery/mockery": "^0.9.9"
 	},
 	"autoload": {
 		"psr-4": {
