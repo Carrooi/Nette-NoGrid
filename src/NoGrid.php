@@ -59,16 +59,24 @@ class NoGrid extends Control
 
 	/**
 	 * @param \Carrooi\NoGrid\DataSource\IDataSource $dataSource
-	 * @param \Carrooi\NoGrid\IPaginatorTemplateProvider $paginatorTemplateProvider
 	 */
-	public function __construct(IDataSource $dataSource, IPaginatorTemplateProvider $paginatorTemplateProvider)
+	public function __construct(IDataSource $dataSource)
 	{
 		parent::__construct();
 
 		$this->dataSource = $dataSource;
-		$this->paginatorTemplateProvider = $paginatorTemplateProvider;
 
 		$this->monitor('Nette\Application\UI\Presenter');
+	}
+
+
+	/**
+	 * @internal
+	 * @param \Carrooi\NoGrid\IPaginatorTemplateProvider $paginatorTemplateProvider
+	 */
+	public function _setPaginatorTemplateProvider(IPaginatorTemplateProvider $paginatorTemplateProvider)
+	{
+		$this->paginatorTemplateProvider = $paginatorTemplateProvider;
 	}
 
 

@@ -2,6 +2,11 @@
 
 namespace Carrooi\NoGrid\DI;
 
+use Carrooi\NoGrid\DefaultPaginatorTemplateProvider;
+use Carrooi\NoGrid\INoGridFactory;
+use Carrooi\NoGrid\Latte\Macros;
+use Carrooi\NoGrid\NoGrid;
+use Nette\Bridges\ApplicationLatte\ILatteFactory;
 use Nette\DI;
 
 /**
@@ -17,7 +22,7 @@ class NoGridExtension extends DI\CompilerExtension
 		'itemsPerPage' => 10,
 		'paginator' => [
 			'template' => null,
-			'templateProvider' => 'Carrooi\NoGrid\DefaultPaginatorTemplateProvider',
+			'templateProvider' => DefaultPaginatorTemplateProvider::class,
 		],
 	];
 
@@ -33,8 +38,8 @@ class NoGridExtension extends DI\CompilerExtension
 		$this->paginatorTemplateProviderClass = $config['paginator']['templateProvider'];
 
 		$grid = $builder->addDefinition($this->prefix('grid'))
-			->setClass('Carrooi\NoGrid\NoGrid')
-			->setImplement('Carrooi\NoGrid\INoGridFactory')
+			->setClass(NoGrid::class)
+			->setImplement(INoGridFactory::class)
 			->addSetup('setItemsPerPage', [$config['itemsPerPage']]);
 
 		if ($config['paginator']['template'] !== null) {
@@ -56,13 +61,13 @@ class NoGridExtension extends DI\CompilerExtension
 				->setClass($this->paginatorTemplateProviderClass);
 		}
 
-		$grid->setArguments(['...', '@'. $paginatorTemplateProvider]);
+		$grid->addSetup('?->_setPaginatorTemplateProvider($this->getService(\''. $paginatorTemplateProvider. '\'))', ['@self']]);
 
 		$registerToLatte = function (DI\ServiceDefinition $def) {
-			$def->addSetup('?->onCompile[] = function($engine) { Carrooi\NoGrid\Latte\Macros::install($engine->getCompiler()); }', array('@self'));
+			$def->addSetup('?->onCompile[] = function($engine) { '. Macros::class. '::install($engine->getCompiler()); }', ['@self']);
 		};
 
-		$latteFactoryService = $builder->getByType('Nette\Bridges\ApplicationLatte\ILatteFactory') ?: 'nette.latteFactory';
+		$latteFactoryService = $builder->getByType(ILatteFactory::class) ?: 'nette.latteFactory';
 		if ($builder->hasDefinition($latteFactoryService)) {
 			$registerToLatte($builder->getDefinition($latteFactoryService));
 		}
