@@ -39,7 +39,8 @@ class NoGridTest extends TestCase
 		/** @var \Mockery\MockInterface|\Carrooi\NoGrid\IPaginatorTemplateProvider $paginatorTemplateProvider */
 		$paginatorTemplateProvider = \Mockery::mock(IPaginatorTemplateProvider::class);
 
-		$this->grid = new NoGrid($this->source, $paginatorTemplateProvider);
+		$this->grid = new NoGrid($this->source);
+		$this->grid->_setPaginatorTemplateProvider($paginatorTemplateProvider);
 	}
 
 
