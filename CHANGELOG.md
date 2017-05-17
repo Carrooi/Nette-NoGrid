@@ -1,6 +1,9 @@
 # Change log
 
-## [2.0.0](https://github.com/Carrooi/Nette-NoGrid/compare/1.1.0...master)
+## [2.0.1](https://github.com/Carrooi/Nette-NoGrid/compare/2.0.0...2.0.1)
+* Fix nette DI extension
+
+## [2.0.0](https://github.com/Carrooi/Nette-NoGrid/compare/1.1.0...2.0.0)
 * Update to nette 2.4
 * Many fixes and refactoring
 * Add support for filters
