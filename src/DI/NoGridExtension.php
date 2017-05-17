@@ -61,7 +61,7 @@ class NoGridExtension extends DI\CompilerExtension
 				->setClass($this->paginatorTemplateProviderClass);
 		}
 
-		$grid->addSetup('?->_setPaginatorTemplateProvider($this->getService(\''. $paginatorTemplateProvider. '\'))', ['@self']]);
+		$grid->addSetup('?->_setPaginatorTemplateProvider($this->getService(\''. $paginatorTemplateProvider. '\'))', ['@self']);
 
 		$registerToLatte = function (DI\ServiceDefinition $def) {
 			$def->addSetup('?->onCompile[] = function($engine) { '. Macros::class. '::install($engine->getCompiler()); }', ['@self']);
