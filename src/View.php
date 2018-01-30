@@ -2,13 +2,11 @@
 
 namespace Carrooi\NoGrid;
 
-use Nette\Object;
-
 /**
  *
  * @author David Kudera <kudera.d@gmail.com>
  */
-class View extends Object
+class View
 {
 
 
